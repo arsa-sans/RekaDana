@@ -28,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.9",
     "drizzle-kit": "^0.31.11",
     "tailwindcss": "^4",
     "typescript": "^5"
