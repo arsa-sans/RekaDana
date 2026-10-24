@@ -1,17 +1,6 @@
-/**
- * Database connection module — SERVER ONLY
- * Do NOT import this in Client Components or expose to browser.
- *
- * Uses @neondatabase/serverless (HTTP/WebSocket transport) which is
- * compatible with Next.js App Router, Edge Runtime, and Serverless Functions.
- *
- * For Drizzle Kit migrations, use DATABASE_URL_UNPOOLED (direct connection).
- * For app queries, use DATABASE_URL (pooled via PgBouncer).
- */
-import "server-only";
-
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
 import * as schema from "./schema";
 
 if (!process.env.DATABASE_URL) {
@@ -20,8 +9,14 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Use pooled connection for app queries
-const sql = neon(process.env.DATABASE_URL);
+// Ensure WebSocket constructor is available in all environments
+if (!neonConfig.webSocketConstructor && typeof WebSocket === "undefined") {
+  neonConfig.webSocketConstructor = ws;
+}
 
-export const db = drizzle(sql, { schema });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export const db = drizzle({ client: pool, schema });
 export type Database = typeof db;
