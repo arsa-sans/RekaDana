@@ -1,26 +1,109 @@
+/**
+ * Token desain untuk RekaDana.
+ *
+ * Palet dipilih berdasarkan DESIGN.md: terang, elegan, profesional.
+ * Warna primer adalah biru tinta (indigo-700) yang tegas tapi tidak agresif.
+ * Warna status finansial: hijau untuk surplus, merah untuk defisit/ditolak,
+ * kuning untuk butuh tindakan, abu-abu netral untuk draft.
+ *
+ * Tidak ada gradient dekoratif, glow, atau glassmorphism di sini.
+ * Semua keputusan warna di globals.css mengikuti token ini.
+ */
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Tipografi: Plus Jakarta Sans untuk body (terbaca pada angka panjang),
+     mono untuk nominal Rupiah agar kolom angka rata kanan. */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Palet primer: indigo yang serius untuk aplikasi keuangan. */
+  --color-primary-50:  #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  /* Warna status: selalu disertai label teks/ikon (DESIGN.md). */
+  --color-status-draft:           #71717a; /* zinc-500 */
+  --color-status-submitted:       #2563eb; /* blue-600 */
+  --color-status-approved:        #16a34a; /* green-600 */
+  --color-status-rejected:        #dc2626; /* red-600 */
+  --color-status-partial:         #d97706; /* amber-600 */
+  --color-status-paid:            #0891b2; /* cyan-600 */
+  --color-status-cancelled:       #9f1239; /* rose-800 */
+  --color-status-deficit:         #dc2626; /* red-600 */
+  --color-status-action-required: #d97706; /* amber-600 */
+
+  /* Permukaan dan batas: netral hangat. */
+  --color-surface:        #ffffff;
+  --color-surface-muted:  #f8fafc; /* slate-50 */
+  --color-surface-raised: #f1f5f9; /* slate-100 */
+  --color-border:         #e2e8f0; /* slate-200 */
+  --color-border-strong:  #cbd5e1; /* slate-300 */
+
+  /* Teks: skala kontras yang lulus WCAG AA pada semua latar. */
+  --color-text-primary:   #0f172a; /* slate-900 */
+  --color-text-secondary: #475569; /* slate-600 */
+  --color-text-muted:     #94a3b8; /* slate-400 */
+  --color-text-inverse:   #ffffff;
+
+  /* Sidebar: biru gelap yang membedakan area navigasi dari konten. */
+  --color-sidebar-bg:     #1e1b4b; /* indigo-950 */
+  --color-sidebar-text:   #c7d2fe; /* indigo-200 */
+  --color-sidebar-active: #4f46e5; /* indigo-600 */
+  --color-sidebar-hover:  rgba(99, 102, 241, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+/* Reset dan base yang konsisten. */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+
+/* Fokus keyboard yang terlihat jelas (R-32). */
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Nomor Rupiah selalu monospace agar kolom angka rata. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* Scrollbar tipis agar sidebar tidak terasa penuh. */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 2px;
 }
