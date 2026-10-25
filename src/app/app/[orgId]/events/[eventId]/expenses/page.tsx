@@ -52,7 +52,7 @@ export default async function ExpensesPage({ params }: Props) {
           description="Pengajuan pengeluaran muncul di sini setelah anggaran disetujui Bendahara."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50 text-left">

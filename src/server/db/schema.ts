@@ -1,5 +1,5 @@
 /**
- * Drizzle ORM Schema — RekaDana Database
+ * Drizzle ORM Schema: RekaDana Database
  *
  * Financial values use NUMERIC (decimal strings in API).
  * All timestamps stored as timestamptz (UTC); displayed in Asia/Jakarta.
@@ -17,9 +17,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 
-// ============================================================================
 // ENUMS
-// ============================================================================
 
 export const membershipRoleEnum = pgEnum("membership_role", [
   "ketua_kegiatan",
@@ -50,9 +48,7 @@ export const evidenceFileTypeEnum = pgEnum("evidence_file_type", [
   "png",
 ]);
 
-// ============================================================================
 // IDENTITY
-// ============================================================================
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -64,7 +60,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// Better Auth tables — managed by Neon Auth
+// Better Auth tables, managed by Neon Auth
 // better-auth will create its own tables; we reference user.id here
 export const sessions = pgTable("sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -76,9 +72,7 @@ export const sessions = pgTable("sessions", {
   userAgent: text("user_agent"),
 });
 
-// ============================================================================
 // ORGANIZATIONS
-// ============================================================================
 
 export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -110,9 +104,7 @@ export const memberships = pgTable(
   })
 );
 
-// ============================================================================
 // EVENTS (Kegiatan)
-// ============================================================================
 
 export const events = pgTable("events", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -130,9 +122,7 @@ export const events = pgTable("events", {
   orgIdx: index("events_org_idx").on(t.organizationId),
 }));
 
-// ============================================================================
-// BUDGET SCENARIOS (Scenario Lab — draft only, NOT official budgets)
-// ============================================================================
+// BUDGET SCENARIOS (Scenario Lab: draft only, not official budgets)
 
 export const budgetScenarios = pgTable("budget_scenarios", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -164,9 +154,7 @@ export const budgetScenarioItems = pgTable("budget_scenario_items", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// ============================================================================
-// BUDGET VERSIONS (Official approved budgets — immutable snapshots)
-// ============================================================================
+// BUDGET VERSIONS (Official approved budgets: immutable snapshots)
 
 export const budgetVersions = pgTable("budget_versions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -203,9 +191,7 @@ export const budgetItems = pgTable("budget_items", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// ============================================================================
 // EXPENSE REQUESTS (Permintaan Pengeluaran)
-// ============================================================================
 
 export const expenseRequests = pgTable("expense_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -228,9 +214,7 @@ export const expenseRequests = pgTable("expense_requests", {
   statusIdx: index("expense_requests_status_idx").on(t.status),
 }));
 
-// ============================================================================
 // PAYMENTS
-// ============================================================================
 
 export const payments = pgTable("payments", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -258,9 +242,7 @@ export const paymentReversals = pgTable("payment_reversals", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// ============================================================================
-// EVIDENCE FILES (Bukti Transaksi — Private)
-// ============================================================================
+// EVIDENCE FILES (Bukti Transaksi, private)
 
 export const evidenceFiles = pgTable("evidence_files", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -271,7 +253,7 @@ export const evidenceFiles = pgTable("evidence_files", {
   fileSizeBytes: integer("file_size_bytes").notNull(),
   contentHash: text("content_hash"), // SHA-256 of file content
   uploadedBy: uuid("uploaded_by").notNull().references(() => users.id),
-  // Scope — must be set before file is considered valid
+  // Scope: must be set before file is considered valid
   organizationId: uuid("organization_id").references(() => organizations.id),
   // Optional: linked to a specific payment or expense request
   paymentId: uuid("payment_id").references(() => payments.id),
@@ -279,9 +261,7 @@ export const evidenceFiles = pgTable("evidence_files", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// ============================================================================
 // AUDIT LOG
-// ============================================================================
 
 export const auditLogs = pgTable("audit_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -291,7 +271,7 @@ export const auditLogs = pgTable("audit_logs", {
   objectType: text("object_type").notNull(), // e.g., "budget_version"
   objectId: text("object_id").notNull(),
   requestId: text("request_id"),
-  // Safe summary — no passwords, tokens, or file contents
+  // Safe summary: no passwords, tokens, or file contents
   beforeState: text("before_state"), // JSON string
   afterState: text("after_state"),   // JSON string
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

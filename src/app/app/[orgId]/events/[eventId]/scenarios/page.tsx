@@ -146,7 +146,7 @@ export default async function ScenarioLabPage({ params }: Props) {
                         <AlertTriangle size={13} />
                         {s.unfundedItemsCount} item
                       </span>
-                    ) : "—"}
+                    ) : <span className="text-slate-400 text-xs">Aman</span>}
                   </td>
                 ))}
               </tr>

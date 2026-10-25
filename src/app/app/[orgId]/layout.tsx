@@ -69,7 +69,7 @@ export default async function OrgLayout({ children, params }: Props) {
       />
       {/* Konten utama: padding kiri = lebar sidebar di layar besar */}
       <div className="flex-1 lg:pl-60">
-        <main className="min-h-dvh px-4 py-6 sm:px-6 lg:px-8">
+        <main className="min-h-dvh px-4 py-6 pt-16 sm:px-6 lg:px-8 lg:pt-6">
           {children}
         </main>
       </div>
