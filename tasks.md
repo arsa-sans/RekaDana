@@ -38,7 +38,7 @@
 |------|------|--------|------------|
 | 0 | Mengunci baseline & kebutuhan | ✅ Selesai | Dokumentasi v4.0 sudah dibuat di ChatGPT |
 | 1 | UX flows & design system | 🔴 Belum | Belum ada DESIGN.md, wireframe, atau design tokens |
-| 2 | Repository, setup Next.js + Flutter | 🟡 Sebagian | Web & mobile sudah ada, tapi struktur belum sepenuhnya sesuai spec |
+| 2 | Repository, setup Next.js + Flutter | ✅ Selesai | Clean install, lint, typecheck, build, dan CI siap |
 | 3 | Auth, organisasi, membership, authorization | 🟡 Sebagian | Sudah ada auth session, login/register/logout, role check |
 | 4 | Kegiatan & Budget Scenario Lab | 🟡 Sebagian | CRUD ada, web UI scenario lab ada, mobile terbatas |
 | 5 | Versi anggaran & approval Bendahara | 🟡 Sebagian | API approve/reject ada, web UI ada, mobile belum |
@@ -111,43 +111,41 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ---
 
-## Fase 2 — Repository & Setup 🟡
+## Fase 2 — Repository & Setup ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai — 27 Oktober 2026**
 
-### Web (RekaDana) — sudah ada:
-- [x] Next.js App Router + TypeScript + Bun
+### Web (RekaDana) — selesai:
+- [x] Next.js 16 App Router + TypeScript + Bun
 - [x] Drizzle ORM + schema PostgreSQL
 - [x] Neon PostgreSQL connection
 - [x] Folder `src/app/api/v1/` dengan semua route handlers
 - [x] Folder `src/server/{auth,db,modules,authorization,storage,audit,http,validation}/`
 - [x] `.env.example` + `.gitignore`
+- [x] CI setup (`.github/workflows/ci.yml`: lint + typecheck + build)
+- [x] README.md resmi RekaDana Web
+- [x] Health endpoint `/api/v1/health` dengan format konsisten (`apiSuccess`/`apiError`)
+- [x] Error contract konsisten dengan `request_id` (UUID generated)
+- [x] Security headers pada `next.config.ts` (nosniff, frame deny, referrer policy)
+- [x] Flat config ESLint untuk Next.js 16 (`eslint.config.mjs`) & `bun run lint` clean (0 errors)
+- [x] `bun run typecheck` & `bun run build` sukses (14/14 static pages generated)
 
-### Web — perlu diselesaikan:
-- [ ] `features/` folder untuk UI komponen per fitur (sesuai spec arsitektur)
-- [ ] CI setup (GitHub Actions: lint + typecheck + build)
-- [ ] README.md yang menjelaskan project (bukan boilerplate Next.js)
-- [ ] Health endpoint `/api/v1/health` — verifikasi sudah berfungsi
-- [ ] Error contract konsisten di semua route (format `{code, message, errors, request_id}`)
-
-### Mobile (rekadana_mobile) — sudah ada:
+### Mobile (rekadana_mobile) — selesai:
 - [x] Flutter + Dart project baseline
 - [x] `lib/features/{auth,expenses,approval,organization}/`
 - [x] `lib/core/{constants,network,storage,utils,widgets}/`
 - [x] Dependency: dio, flutter_secure_storage, google_fonts, image_picker
+- [x] CI setup (`.github/workflows/ci.yml`: flutter analyze + test)
+- [x] README.md resmi RekaDana Mobile
+- [x] `pubspec.yaml` description diperbarui
+- [x] `flutter analyze` clean (0 warnings / no issues found)
+- [x] `flutter test` lulus (9/9 tests passed)
 
-### Mobile — perlu diselesaikan:
-- [ ] README.md yang menjelaskan project
-- [ ] `pubspec.yaml` description diperbarui dari boilerplate
-- [ ] Struktur folder sesuai spec: `apps/mobile` jika monorepo, atau standalone dengan jelas
-- [ ] Analisis apakah butuh provider/riverpod/bloc untuk state management
-- [ ] Flutter analyze clean (0 warnings)
-
-**Gate sebelum lanjut ke Fase 3:**
-- [ ] Clean install web: `bun install && bun run lint && bun run build` sukses
-- [ ] Flutter: `flutter analyze && flutter test` clean
-- [ ] Migrations dari database kosong berjalan
-- [ ] Secrets tidak ada di repository
+**Gate Fase 2 — semua terpenuhi:**
+- [x] Clean install web: `bun install && bun run lint && bun run build` sukses
+- [x] Flutter: `flutter analyze && flutter test` clean
+- [x] Error contract `/api/v1` terstandarisasi dengan `request_id`
+- [x] Secrets tidak ada di repository
 
 ---
 

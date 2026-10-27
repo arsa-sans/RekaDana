@@ -6,6 +6,10 @@ import { sessions, users } from "@/server/db/schema";
 
 export const SESSION_COOKIE_NAME = "rekadana_session";
 
+// Session lifetime: default 7 days, configurable via SESSION_TTL_DAYS env.
+const SESSION_TTL_MS =
+  parseInt(process.env.SESSION_TTL_DAYS ?? "7", 10) * 24 * 60 * 60 * 1000;
+
 export interface AuthenticatedUser {
   id: string;
   email: string;
@@ -15,7 +19,7 @@ export interface AuthenticatedUser {
 
 export async function createSession(userId: string, userAgent?: string, ipAddress?: string) {
   const token = randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days validity
+  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
 
   const [session] = await db
     .insert(sessions)

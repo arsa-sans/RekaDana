@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 
 interface SuccessOptions<T> {
   data: T;
@@ -30,7 +31,7 @@ export function apiError({ code, message, errors, status = 400, requestId }: Err
       code,
       message,
       ...(errors ? { errors } : {}),
-      ...(requestId ? { request_id: requestId } : {}),
+      request_id: requestId ?? randomUUID(),
     },
     { status }
   );
