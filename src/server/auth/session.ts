@@ -82,6 +82,22 @@ export async function getSession(): Promise<{ user: AuthenticatedUser; sessionTo
   };
 }
 
+export async function setSessionCookie(token: string, expiresAt: Date) {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: expiresAt,
+    path: "/",
+  });
+}
+
+export async function clearSessionCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE_NAME);
+}
+
 export async function deleteSession(token: string) {
   await db.delete(sessions).where(eq(sessions.token, token));
 }

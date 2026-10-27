@@ -69,15 +69,24 @@ export function Sidebar({ orgName, orgSlug, userName, role, items, onLogout }: S
   const sidebarContent = (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header organisasi */}
-      <div className="flex items-center gap-2 border-b border-indigo-800 px-4 py-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-indigo-600 text-white">
-          <Building2 size={16} />
+      <Link
+        href="/app?select=true"
+        title="Pilih atau ganti organisasi"
+        className="group flex items-center justify-between border-b border-indigo-800 px-4 py-3.5 hover:bg-indigo-900/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-indigo-600 text-white">
+            <Building2 size={16} />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-white group-hover:text-indigo-200">{orgName}</p>
+            <p className="text-xs text-indigo-300">/{orgSlug}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">{orgName}</p>
-          <p className="text-xs text-indigo-300">/{orgSlug}</p>
-        </div>
-      </div>
+        <span className="shrink-0 rounded px-1.5 py-0.5 text-xs text-indigo-300 group-hover:text-white group-hover:bg-indigo-800 transition-colors">
+          Ganti
+        </span>
+      </Link>
 
       {/* Menu navigasi */}
       <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Navigasi utama">

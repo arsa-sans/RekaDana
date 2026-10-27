@@ -31,16 +31,23 @@ export async function requireMembership(
     .where(
       and(
         eq(memberships.userId, userId),
-        eq(memberships.organizationId, organizationId),
-        eq(memberships.isActive, true)
+        eq(memberships.organizationId, organizationId)
       )
     )
     .limit(1);
 
   if (!membership) {
     throw new AuthorizationError(
-      "Akses ditolak. Anda bukan anggota aktif organisasi ini.",
+      "Akses ditolak. Anda bukan anggota organisasi ini.",
       "ORGANIZATION_ACCESS_DENIED",
+      403
+    );
+  }
+
+  if (!membership.isActive) {
+    throw new AuthorizationError(
+      "Keanggotaan Anda di organisasi ini telah dinonaktifkan. Hubungi Ketua Kegiatan atau Bendahara untuk mengaktifkan kembali akun Anda.",
+      "MEMBERSHIP_INACTIVE",
       403
     );
   }

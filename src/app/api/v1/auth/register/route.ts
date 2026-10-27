@@ -1,11 +1,10 @@
 import { NextRequest } from "next/server";
-import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema";
 import { registerSchema } from "@/server/validation";
 import { hashPassword } from "@/server/auth/passwords";
-import { createSession, SESSION_COOKIE_NAME } from "@/server/auth/session";
+import { createSession, setSessionCookie } from "@/server/auth/session";
 import { apiSuccess, apiError } from "@/server/http/response";
 
 export async function POST(req: NextRequest) {
@@ -49,14 +48,7 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-forwarded-for") || undefined
     );
 
-    const cookieStore = await cookies();
-    cookieStore.set(SESSION_COOKIE_NAME, session.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      expires: session.expiresAt,
-      path: "/",
-    });
+    await setSessionCookie(session.token, session.expiresAt);
 
     return apiSuccess({
       data: {

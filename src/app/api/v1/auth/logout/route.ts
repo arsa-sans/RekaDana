@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-import { getSession, deleteSession, SESSION_COOKIE_NAME } from "@/server/auth/session";
+import { getSession, deleteSession, clearSessionCookie } from "@/server/auth/session";
 import { apiSuccess } from "@/server/http/response";
 
 export async function POST() {
@@ -8,8 +7,7 @@ export async function POST() {
     await deleteSession(session.sessionToken);
   }
 
-  const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  await clearSessionCookie();
 
   return apiSuccess({
     data: { success: true },
