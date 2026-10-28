@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { Plus, Send } from "lucide-react";
+import { Plus, Send, Archive } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 /**
- * Aksi pada setiap skenario: tambah item dan ajukan ke Bendahara.
+ * Aksi pada setiap skenario: tambah item, ajukan ke Bendahara, dan arsipkan.
  * Ajukan diblokir di UI jika defisit (proteksi tambahan, server tetap memvalidasi).
  */
 export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props) {
@@ -23,6 +23,9 @@ export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props
   const { toast } = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const [archiveConfirmOpen, setArchiveConfirmOpen] = useState(false);
+  const [isArchiving, startArchiveTransition] = useTransition();
 
   function handleSubmit() {
     startTransition(async () => {
@@ -51,6 +54,35 @@ export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props
     });
   }
 
+  function handleArchive() {
+    startArchiveTransition(async () => {
+      try {
+        const res = await fetch(`/api/v1/budget-scenarios/${scenarioId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "archive" }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          toast({ variant: "error", title: "Gagal mengarsipkan skenario", description: data.message });
+          setArchiveConfirmOpen(false);
+          return;
+        }
+
+        toast({
+          variant: "success",
+          title: "Skenario berhasil diarsipkan",
+          description: "Skenario ini tidak lagi tampil di perbandingan aktif.",
+        });
+        setArchiveConfirmOpen(false);
+        router.refresh();
+      } catch {
+        toast({ variant: "error", title: "Gagal terhubung ke server" });
+      }
+    });
+  }
+
   return (
     <div className="flex items-center gap-2">
       <Link
@@ -62,6 +94,7 @@ export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props
       </Link>
 
       <button
+        type="button"
         onClick={() => setConfirmOpen(true)}
         disabled={isDeficit}
         title={isDeficit ? "Total melebihi pagu dana. Kurangi estimasi sebelum mengajukan." : "Ajukan skenario ini ke Bendahara"}
@@ -69,6 +102,16 @@ export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props
       >
         <Send size={13} />
         Ajukan
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setArchiveConfirmOpen(true)}
+        title="Arsipkan skenario ini agar tidak lagi tampil di lab perbandingan"
+        className="flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+      >
+        <Archive size={13} />
+        Arsipkan
       </button>
 
       <ConfirmModal
@@ -79,6 +122,16 @@ export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props
         confirmLabel="Ya, ajukan"
         onConfirm={handleSubmit}
         loading={isPending}
+      />
+
+      <ConfirmModal
+        open={archiveConfirmOpen}
+        onOpenChange={setArchiveConfirmOpen}
+        title="Arsipkan skenario anggaran?"
+        description="Skenario ini akan disembunyikan dari perbandingan aktif. Anda dapat membuat skenario baru jika slot perbandingan sudah penuh."
+        confirmLabel="Arsipkan skenario"
+        onConfirm={handleArchive}
+        loading={isArchiving}
       />
     </div>
   );

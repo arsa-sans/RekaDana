@@ -9,6 +9,7 @@ import { ForbiddenState } from "@/components/ui/States";
 import { formatRupiah } from "@/lib/utils";
 import { Plus, FlaskConical, AlertTriangle, TrendingDown } from "lucide-react";
 import { ScenarioActions } from "./ScenarioActions";
+import { ScenarioItemActions } from "./ScenarioItemActions";
 
 interface Props {
   params: Promise<{ orgId: string; eventId: string }>;
@@ -59,6 +60,17 @@ export default async function ScenarioLabPage({ params }: Props) {
             Skenario baru
           </Link>
         )}
+      </div>
+
+      {/* Label status skenario */}
+      <div
+        role="note"
+        className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm"
+      >
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+        <p>
+          <span className="font-semibold">Skenario bukan anggaran resmi sampai disetujui Bendahara.</span> Skenario berfungsi sebagai simulasi kebutuhan sebelum diajukan dan dikunci menjadi draf versi anggaran.
+        </p>
       </div>
 
       {/* Empty state */}
@@ -185,6 +197,9 @@ export default async function ScenarioLabPage({ params }: Props) {
                     <th scope="col" className="px-4 py-2.5 text-right text-xs font-medium text-slate-500">Total</th>
                     <th scope="col" className="px-4 py-2.5 text-center text-xs font-medium text-slate-500">Prioritas</th>
                     <th scope="col" className="px-4 py-2.5 text-center text-xs font-medium text-slate-500">Aktif</th>
+                    {canEdit && (
+                      <th scope="col" className="px-3 py-2.5 text-center text-xs font-medium text-slate-500">Aksi</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -210,6 +225,11 @@ export default async function ScenarioLabPage({ params }: Props) {
                           ? <span className="text-green-600 font-medium">Ya</span>
                           : <span className="text-slate-400">Tidak</span>}
                       </td>
+                      {canEdit && (
+                        <td className="px-3 py-2.5 text-center">
+                          <ScenarioItemActions scenarioId={scenario.id} item={item} />
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

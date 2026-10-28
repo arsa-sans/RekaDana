@@ -170,6 +170,21 @@ export async function addScenarioItem(
 
   await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "bendahara", "panitia_anggota"]);
 
+  // Block if already submitted as a budget version
+  const existingVersion = await db
+    .select({ id: budgetVersions.id })
+    .from(budgetVersions)
+    .where(eq(budgetVersions.sourceScenarioId, scenario.id))
+    .limit(1);
+
+  if (existingVersion.length > 0) {
+    throw new AuthorizationError(
+      "Skenario ini sudah diajukan sebagai versi anggaran dan tidak dapat diubah.",
+      "SCENARIO_IMMUTABLE",
+      409
+    );
+  }
+
   const [item] = await db
     .insert(budgetScenarioItems)
     .values({
@@ -276,4 +291,130 @@ export async function submitScenarioAsBudget(userId: string, scenarioId: string)
 
     return version;
   });
+}
+
+export async function updateScenarioItem(
+  userId: string,
+  itemId: string,
+  data: Partial<{
+    name: string;
+    category: string;
+    priority: "required" | "normal" | "optional";
+    quantity: string;
+    estimatedUnitCost: string;
+    isIncluded: boolean;
+    notes: string;
+  }>
+) {
+  const [item] = await db
+    .select()
+    .from(budgetScenarioItems)
+    .where(eq(budgetScenarioItems.id, itemId))
+    .limit(1);
+
+  if (!item) {
+    throw new AuthorizationError("Item skenario tidak ditemukan.", "ITEM_NOT_FOUND", 404);
+  }
+
+  const [scenario] = await db
+    .select()
+    .from(budgetScenarios)
+    .where(eq(budgetScenarios.id, item.scenarioId))
+    .limit(1);
+
+  if (!scenario) {
+    throw new AuthorizationError("Skenario tidak ditemukan.", "SCENARIO_NOT_FOUND", 404);
+  }
+
+  await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "bendahara", "panitia_anggota"]);
+
+  const existingVersion = await db
+    .select({ id: budgetVersions.id })
+    .from(budgetVersions)
+    .where(eq(budgetVersions.sourceScenarioId, scenario.id))
+    .limit(1);
+
+  if (existingVersion.length > 0) {
+    throw new AuthorizationError(
+      "Skenario ini sudah diajukan sebagai versi anggaran dan tidak dapat diubah.",
+      "SCENARIO_IMMUTABLE",
+      409
+    );
+  }
+
+  const [updated] = await db
+    .update(budgetScenarioItems)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(budgetScenarioItems.id, itemId))
+    .returning();
+
+  return updated;
+}
+
+export async function deleteScenarioItem(userId: string, itemId: string) {
+  const [item] = await db
+    .select()
+    .from(budgetScenarioItems)
+    .where(eq(budgetScenarioItems.id, itemId))
+    .limit(1);
+
+  if (!item) {
+    throw new AuthorizationError("Item skenario tidak ditemukan.", "ITEM_NOT_FOUND", 404);
+  }
+
+  const [scenario] = await db
+    .select()
+    .from(budgetScenarios)
+    .where(eq(budgetScenarios.id, item.scenarioId))
+    .limit(1);
+
+  if (!scenario) {
+    throw new AuthorizationError("Skenario tidak ditemukan.", "SCENARIO_NOT_FOUND", 404);
+  }
+
+  await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "bendahara", "panitia_anggota"]);
+
+  const existingVersion = await db
+    .select({ id: budgetVersions.id })
+    .from(budgetVersions)
+    .where(eq(budgetVersions.sourceScenarioId, scenario.id))
+    .limit(1);
+
+  if (existingVersion.length > 0) {
+    throw new AuthorizationError(
+      "Skenario ini sudah diajukan sebagai versi anggaran dan tidak dapat diubah.",
+      "SCENARIO_IMMUTABLE",
+      409
+    );
+  }
+
+  await db.delete(budgetScenarioItems).where(eq(budgetScenarioItems.id, itemId));
+}
+
+export async function archiveScenario(userId: string, scenarioId: string) {
+  const [scenario] = await db
+    .select()
+    .from(budgetScenarios)
+    .where(eq(budgetScenarios.id, scenarioId))
+    .limit(1);
+
+  if (!scenario) {
+    throw new AuthorizationError("Skenario tidak ditemukan.", "SCENARIO_NOT_FOUND", 404);
+  }
+
+  await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "bendahara", "panitia_anggota"]);
+
+  const [updated] = await db
+    .update(budgetScenarios)
+    .set({
+      isArchived: true,
+      updatedAt: new Date(),
+    })
+    .where(eq(budgetScenarios.id, scenarioId))
+    .returning();
+
+  return updated;
 }
