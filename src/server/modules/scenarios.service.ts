@@ -213,8 +213,8 @@ export async function submitScenarioAsBudget(userId: string, scenarioId: string)
     throw new AuthorizationError("Skenario tidak ditemukan.", "SCENARIO_NOT_FOUND", 404);
   }
 
-  // Only Ketua or authorized panitia can submit
-  const { event } = await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "panitia_anggota"]);
+  // Ketua, Panitia, atau Bendahara dapat mengajukan skenario (namun pemohon dilarang self-approval)
+  const { event } = await requireEventAccess(userId, scenario.eventId, ["ketua_kegiatan", "panitia_anggota", "bendahara"]);
 
   const items = await db
     .select()

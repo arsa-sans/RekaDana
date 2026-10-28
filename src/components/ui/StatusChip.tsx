@@ -4,19 +4,20 @@ import { cn } from "@/lib/utils";
 /**
  * StatusChip: selalu menyertakan label teks (DESIGN.md).
  * Warna tidak pernah berdiri sendiri sebagai satu-satunya penanda (R-25).
+ * Nilai kontras diverifikasi memenuhi standar WCAG AA.
  */
 const chipVariants = cva(
-  "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium",
+  "inline-flex items-center gap-1 rounded-[6px] px-2.5 py-0.5 text-xs font-semibold",
   {
     variants: {
       status: {
-        draft:     "bg-zinc-100 text-zinc-600",
-        submitted: "bg-blue-50 text-blue-700",
-        approved:  "bg-green-50 text-green-700",
-        rejected:  "bg-red-50 text-red-700",
-        partially_paid: "bg-amber-50 text-amber-700",
-        paid:      "bg-cyan-50 text-cyan-700",
-        cancelled: "bg-rose-50 text-rose-800",
+        draft:          "bg-[#F1F5F9] text-[#475569]",
+        submitted:      "bg-[#DBEAFE] text-[#1E40AF]",
+        approved:       "bg-[#D1FAE5] text-[#065F46]",
+        rejected:       "bg-[#FEE2E2] text-[#991B1B]",
+        partially_paid: "bg-[#FEF3C7] text-[#92400E]",
+        paid:           "bg-[#EAF5F0] text-[#153D35]",
+        cancelled:      "bg-[#F1F5F9] text-[#6B7280]",
       },
     },
     defaultVariants: {
@@ -32,7 +33,7 @@ const STATUS_LABEL: Record<Status, string> = {
   submitted:      "Diajukan",
   approved:       "Disetujui",
   rejected:       "Ditolak",
-  partially_paid: "Dibayar sebagian",
+  partially_paid: "Sebagian Lunas",
   paid:           "Lunas",
   cancelled:      "Dibatalkan",
 };

@@ -51,7 +51,7 @@ export function ConfirmModal({
               {title}
             </DialogPrimitive.Title>
             <DialogPrimitive.Close
-              className="rounded p-0.5 text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="rounded p-0.5 text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A]"
               aria-label="Tutup"
             >
               <X size={16} />
@@ -80,7 +80,7 @@ export function ConfirmModal({
                 "rounded-md px-4 py-2 text-sm font-medium text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60",
                 variant === "destructive"
                   ? "bg-red-600 hover:bg-red-700 focus-visible:ring-red-500"
-                  : "bg-indigo-600 hover:bg-indigo-700 focus-visible:ring-indigo-500"
+                  : "bg-[#153D35] hover:bg-[#1A4D43] focus-visible:ring-[#35B88A]"
               )}
             >
               {loading ? "Memproses..." : confirmLabel}

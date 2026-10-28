@@ -92,7 +92,7 @@ export function BudgetVersionActions({ versionId, versionNumber, submittedBy, cu
           onClick={() => setApproveOpen(true)}
           disabled={isSelf}
           title={isSelf ? "Anda tidak dapat menyetujui pengajuan Anda sendiri." : "Setujui versi ini"}
-          className="flex items-center gap-1 rounded-md bg-green-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 rounded-[6px] bg-[#153D35] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#1A4D43] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A] focus-visible:ring-offset-1 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <CheckCircle size={13} />
           Setujui
