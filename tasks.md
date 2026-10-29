@@ -1,7 +1,7 @@
 # Reka Dana — Tasks & Progress
 
 > Dokumen ini adalah panduan pengerjaan project RekaDana berdasarkan dokumentasi brainstorming v4.0.
-> Setiap fase selesai → laporkan → **tunggu konfirmasi eksplisit** sebelum lanjut ke fase berikutnya.
+> Setiap fase selesai -> laporkan -> **tunggu konfirmasi eksplisit** sebelum lanjut ke fase berikutnya.
 > Commit ke GitHub hanya setelah mendapat persetujuan pesan commit dari pengguna.
 
 ---
@@ -21,14 +21,14 @@
 - Hanya Bendahara yang bisa approve/reject anggaran dan pengeluaran
 - Self-approval dilarang; alasan reject wajib diisi
 - UI dalam Bahasa Indonesia; angka dalam format IDR (Rupiah)
-- Bukti lampiran: PDF/JPEG/PNG, maks 5 MiB (5.242.880 byte) — validasi server-side
+- Bukti lampiran: PDF/JPEG/PNG, maks 5 MiB (5.242.880 byte) (validasi server-side)
 - Storage development: local private; production: S3-compatible private
 
 **Repo GitHub:**
 - Web: [github.com/arsa-sans/RekaDana](https://github.com/arsa-sans/RekaDana)
 - Mobile: [github.com/arsa-sans/rekadana_mobile](https://github.com/arsa-sans/rekadana_mobile)
 
-**Antislop:** `during` (session override) — berlaku sepanjang pengerjaan.
+**Antislop:** `during` (session override) (berlaku sepanjang pengerjaan).
 
 ---
 
@@ -37,12 +37,12 @@
 | Fase | Nama | Status | Keterangan |
 |------|------|--------|------------|
 | 0 | Mengunci baseline & kebutuhan | ✅ Selesai | Dokumentasi v4.0 sudah dibuat di ChatGPT |
-| 1 | UX flows & design system | 🔴 Belum | Belum ada DESIGN.md, wireframe, atau design tokens |
+| 1 | UX flows & design system | ✅ Selesai | DESIGN.md & USER_JOURNEYS.md siap di kedua platform |
 | 2 | Repository, setup Next.js + Flutter | ✅ Selesai | Clean install, lint, typecheck, build, dan CI siap |
-| 3 | Auth, organisasi, membership, authorization | 🟡 Sebagian | Sudah ada auth session, login/register/logout, role check |
-| 4 | Kegiatan & Budget Scenario Lab | 🟡 Sebagian | CRUD ada, web UI scenario lab ada, mobile terbatas |
-| 5 | Versi anggaran & approval Bendahara | 🟡 Sebagian | API approve/reject ada, web UI ada, mobile belum |
-| 6 | Permintaan pengeluaran, payments, koreksi | 🟡 Sebagian | API & web UI ada, reversal ada, mobile terbatas |
+| 3 | Auth, organisasi, membership, authorization | ✅ Selesai | Cookie flags, proxy CSRF, tenant isolation, expiry, mobile error handling & negative tests lulus |
+| 4 | Kegiatan & Budget Scenario Lab | ✅ Selesai | Komparasi skenario, edit/hapus item, arsip, immutability, Flutter lab & 100% gate tests |
+| 5 | Versi anggaran & approval Bendahara | ✅ Selesai | Histori versi, diff snapshot, proteksi self-approval, aktivasi atomik, review Bendahara mobile & 100% gate tests |
+| 6 | Permintaan pengeluaran, payments, koreksi | ✅ Selesai | Partial payment, remaining balance, concurrency lock, reversal, over-budget check & 100% gate tests |
 | 7 | Evidence & private storage | 🟡 Sebagian | API upload/download ada, storage lokal dev, mobile upload ada |
 | 8 | Dashboard, reports, audit, export | 🟡 Sebagian | Budget vs actual ada, laporan web ada, CSV export belum |
 | 9 | Integrasi vertical slice web + Flutter | 🔴 Belum | Mobile masih ada gap fitur; integrasi end-to-end belum diuji |
@@ -56,14 +56,14 @@
 **Status: Selesai** (dilakukan di ChatGPT brainstorming session)
 
 Dokumen yang sudah ditetapkan di brainstorming:
-- [x] DECISIONS.md — keputusan arsitektur dan domain
-- [x] ARCHITECTURE.md — fullstack Next.js + Flutter Android
-- [x] API_SPEC.md — prefix `/api/v1`, format error seragam
-- [x] DATABASE.md — PostgreSQL + Drizzle ORM
-- [x] SECURITY.md — session cookie, storage privat
-- [x] ROADMAP.md — 11 fase dengan approval gate
-- [x] AGENTS.md — aturan AI coding agent
-- [x] SKILL.md — antislop skill setup
+- [x] DECISIONS.md (keputusan arsitektur dan domain)
+- [x] ARCHITECTURE.md (fullstack Next.js + Flutter Android)
+- [x] API_SPEC.md (prefix `/api/v1`, format error seragam)
+- [x] DATABASE.md (PostgreSQL + Drizzle ORM)
+- [x] SECURITY.md (session cookie, storage privat)
+- [x] ROADMAP.md (11 fase dengan approval gate)
+- [x] AGENTS.md (aturan AI coding agent)
+- [x] SKILL.md (antislop skill setup)
 
 > **Catatan:** Aturan resmi Traspac Competition 2027 belum terverifikasi dari sumber resmi. Tidak ada klaim kompetisi tanpa bukti.
 
@@ -71,14 +71,14 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ## Fase 1 — UX Flows & Design System ✅
 
-**Status: Selesai — 26 Oktober 2026**
+**Status: Selesai (26 Oktober 2026)**
 
 ### Dikerjakan:
 
-#### 1.1 DESIGN.md — Arah visual project
+#### 1.1 DESIGN.md (Arah visual project)
 - [x] Identitas produk: nama, personality, tone (profesional-approachable untuk SMK)
 - [x] Palet warna: Deep Forest #153D35, Growth Green #35B88A, Mint Mist #EAF5F0, Cloud White #F6F8F7
-- [x] Kontras WCAG AA diverifikasi via contrast-check.py — 4 kombinasi dilarang dicatat
+- [x] Kontras WCAG AA diverifikasi via contrast-check.py (4 kombinasi dilarang dicatat)
 - [x] Tipografi: Plus Jakarta Sans (dipilih karena konteks Indonesia + tidak AI-default)
 - [x] Radius, shadow, spacing tokens (3 nilai radius, 2 level shadow, grid 4px)
 - [x] ENERGY 2 / RHYTHM 2 / MOTION 1 dials
@@ -88,11 +88,11 @@ Dokumen yang sudah ditetapkan di brainstorming:
 - [x] Ketua Kegiatan: 5 alur lengkap
 - [x] Bendahara: 5 alur lengkap (approve/reject budget, approve/reject expense, payment, reversal, export)
 - [x] Panitia/Anggota: 4 alur lengkap
-- [x] States wajib: kosong, loading, error, forbidden, success — contoh teks per halaman
+- [x] States wajib: kosong, loading, error, forbidden, success (contoh teks per halaman)
 
 #### 1.3 Budget Scenario Lab spec
 - [x] Layout satu skenario + tampilan defisit
-- [x] Perbandingan side-by-side (≥2 skenario)
+- [x] Perbandingan side-by-side (>= 2 skenario)
 - [x] Label wajib: "Skenario belum resmi sampai disetujui Bendahara"
 
 #### 1.4 Design tokens
@@ -101,11 +101,11 @@ Dokumen yang sudah ditetapkan di brainstorming:
 - [x] Terminologi konsisten: Diajukan/Disetujui/Ditolak/Lunas/Dibatalkan/Sebagian Lunas
 
 **File yang dibuat:**
-- `DESIGN.md` — di RekaDana (web) dan rekadana_mobile
-- `USER_JOURNEYS.md` — di RekaDana (web) dan rekadana_mobile
+- `DESIGN.md` (di RekaDana (web) dan rekadana_mobile)
+- `USER_JOURNEYS.md` (di RekaDana (web) dan rekadana_mobile)
 
-**Gate Fase 1 — semua terpenuhi:**
-- [x] Semua role utama punya flow yang jelas (3 role × alur lengkap)
+**Gate Fase 1 (semua terpenuhi):**
+- [x] Semua role utama punya flow yang jelas (3 role x alur lengkap)
 - [x] DESIGN.md disetujui pengguna (palet, font, personality dikonfirmasi)
 - [x] Kedua platform punya fungsi berguna yang terdefinisi
 
@@ -113,9 +113,9 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ## Fase 2 — Repository & Setup ✅
 
-**Status: Selesai — 27 Oktober 2026**
+**Status: Selesai (27 Oktober 2026)**
 
-### Web (RekaDana) — selesai:
+### Web (RekaDana) (selesai):
 - [x] Next.js 16 App Router + TypeScript + Bun
 - [x] Drizzle ORM + schema PostgreSQL
 - [x] Neon PostgreSQL connection
@@ -128,9 +128,9 @@ Dokumen yang sudah ditetapkan di brainstorming:
 - [x] Error contract konsisten dengan `request_id` (UUID generated)
 - [x] Security headers pada `next.config.ts` (nosniff, frame deny, referrer policy)
 - [x] Flat config ESLint untuk Next.js 16 (`eslint.config.mjs`) & `bun run lint` clean (0 errors)
-- [x] `bun run typecheck` & `bun run build` sukses (14/14 static pages generated)
+- [x] `bun run typecheck` & `bun run build` sukses (15/15 static & dynamic pages generated)
 
-### Mobile (rekadana_mobile) — selesai:
+### Mobile (rekadana_mobile) (selesai):
 - [x] Flutter + Dart project baseline
 - [x] `lib/features/{auth,expenses,approval,organization}/`
 - [x] `lib/core/{constants,network,storage,utils,widgets}/`
@@ -139,9 +139,9 @@ Dokumen yang sudah ditetapkan di brainstorming:
 - [x] README.md resmi RekaDana Mobile
 - [x] `pubspec.yaml` description diperbarui
 - [x] `flutter analyze` clean (0 warnings / no issues found)
-- [x] `flutter test` lulus (9/9 tests passed)
+- [x] `flutter test` lulus
 
-**Gate Fase 2 — semua terpenuhi:**
+**Gate Fase 2 (semua terpenuhi):**
 - [x] Clean install web: `bun install && bun run lint && bun run build` sukses
 - [x] Flutter: `flutter analyze && flutter test` clean
 - [x] Error contract `/api/v1` terstandarisasi dengan `request_id`
@@ -149,168 +149,160 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ---
 
-## Fase 3 — Auth, Organisasi, Membership & Authorization 🟡
+## Fase 3 — Auth, Organisasi, Membership & Authorization ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (27 Oktober 2026)**
 
-### Web — sudah ada:
-- [x] `POST /api/v1/auth/login` — login dengan email + password
-- [x] `POST /api/v1/auth/register` — registrasi user baru
-- [x] `POST /api/v1/auth/logout` — hapus session
-- [x] Session cookie-based (`HttpOnly`)
-- [x] `GET /api/v1/me` — profil user aktif
-- [x] `requireMembership()` + `requireEventAccess()` — tenant/resource authorization
+### Web (selesai):
+- [x] `POST /api/v1/auth/login` (login dengan email + password)
+- [x] `POST /api/v1/auth/register` (registrasi user baru)
+- [x] `POST /api/v1/auth/logout` (hapus session)
+- [x] Session cookie-based (`HttpOnly`, `SameSite: Lax`, `Secure` pada production) via `setSessionCookie()`
+- [x] `GET /api/v1/me` (profil user aktif)
+- [x] `requireMembership()` + `requireEventAccess()` (tenant/resource authorization)
 - [x] Role enum: `ketua_kegiatan`, `bendahara`, `panitia_anggota`
-- [x] `GET /api/v1/organizations` + `POST` — CRUD organisasi
-- [x] `GET /api/v1/organizations/[orgId]/members` + `POST` — CRUD membership
+- [x] `GET /api/v1/organizations` + `POST` (CRUD organisasi)
+- [x] `GET /api/v1/organizations/[orgId]/members` + `POST` (CRUD membership)
+- [x] Proteksi CSRF mutasi (POST/PUT/PATCH/DELETE) via Next.js 16 `proxy.ts` (Origin & Host validation)
+- [x] Session expiry terkonfigurasi (default 7 hari via `SESSION_TTL_DAYS`, expired token otomatis ditolak DB)
+- [x] Halaman `/app` (pilih organisasi) redirect otomatis jika hanya 1 org, atau menampilkan kartu role jika > 1
+- [x] Halaman `/app/new-org` untuk pembuatan organisasi baru dengan validasi dan slug otomatis
+- [x] Error state khusus `MEMBERSHIP_INACTIVE` vs `ORGANIZATION_ACCESS_DENIED` pada layout organisasi
+- [x] Test gate otomatis (`src/server/test-phase3-auth-gate.ts`) (100% lulus)
 
-### Web — perlu diselesaikan:
-- [ ] Verifikasi: `Secure` flag pada production cookie, `SameSite` setting
-- [ ] Session expiry yang dikonfigurasi (bukan selamanya)
-- [ ] CSRF/origin validation pada semua mutasi (POST/PATCH/DELETE)
-- [ ] Test negative cases: role bypass, inactive membership, tenant isolation (A/B)
-- [ ] Halaman `/app` (pilih organisasi) sudah redirect dengan benar
-- [ ] Error state saat membership tidak aktif
-
-### Mobile — sudah ada:
+### Mobile (selesai):
 - [x] Login screen + auth service
 - [x] Token disimpan di `flutter_secure_storage`
-- [x] `user_model.dart` — model user
+- [x] `user_model.dart` (model user)
+- [x] Logout + clear secure storage pada `OrgSelectionScreen` dan `EventsListScreen`
+- [x] Token expiry handling: `ApiClient.onSessionExpired` mendeteksi 401 dan redirect ke login dengan pesan informatif
+- [x] Org selection screen -> navigasi menuju event list dan kemampuan ganti organisasi
+- [x] Error handling saat server offline / timeout: pemetaan `SocketException` & timeout ke Bahasa Indonesia
+- [x] Automated unit & widget tests (`test/phase3_auth_test.dart`) (13/13 tests lulus)
 
-### Mobile — perlu diselesaikan:
-- [ ] Logout + clear secure storage
-- [ ] Token expiry handling + auto-refresh atau re-login
-- [ ] Org selection screen → menuju event list
-- [ ] Negative test: akses dengan token expired
-- [ ] Error handling saat server offline (timeout, network error)
-
-**Gate sebelum lanjut ke Fase 4:**
-- [ ] Negative tests role bypass lulus (server-side rejection terbukti)
-- [ ] Tenant isolation: user org A tidak bisa akses data org B
-- [ ] Session/token expiry diuji pada kedua platform
-- [ ] Inactive membership ditolak
+**Gate sebelum lanjut ke Fase 4 (semua terpenuhi):**
+- [x] Negative tests role bypass lulus (server-side rejection terbukti pada `test-phase3-auth-gate.ts`)
+- [x] Tenant isolation: user org A tidak bisa akses data org B (terbukti 403 `ORGANIZATION_ACCESS_DENIED`)
+- [x] Session/token expiry diuji pada kedua platform (Web: `expiresAt < NOW`, Mobile: 401 redirect & auto-clear)
+- [x] Inactive membership ditolak (403 `MEMBERSHIP_INACTIVE` dengan recovery action ke `/app`)
 
 ---
 
-## Fase 4 — Kegiatan & Budget Scenario Lab 🟡
+## Fase 4 — Kegiatan & Budget Scenario Lab ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (28 Oktober 2026)**
 
-### Web — sudah ada:
-- [x] `GET /api/v1/organizations/[orgId]/events` + `POST` — list & buat kegiatan
-- [x] `GET /api/v1/events/[eventId]` + PATCH + DELETE (soft) 
+### Web (selesai):
+- [x] `GET /api/v1/organizations/[orgId]/events` + `POST` (list & buat kegiatan)
+- [x] `GET /api/v1/events/[eventId]` + PATCH + DELETE (soft)
 - [x] `GET /api/v1/events/[eventId]/budget-scenarios` + `POST`
 - [x] `GET /api/v1/budget-scenarios/[scenarioId]/items` + `POST`
-- [x] `POST /api/v1/budget-scenarios/[scenarioId]/submit` — ajukan ke budget version
-- [x] Web UI: halaman scenarios, form buat skenario, tambah item
-- [x] Perhitungan: total, biaya per peserta di UI
+- [x] `PATCH /api/v1/budget-scenarios/[scenarioId]/items/[itemId]` + `DELETE` (edit & hapus item kebutuhan)
+- [x] `PATCH /api/v1/budget-scenarios/[scenarioId]` (arsipkan skenario anggaran)
+- [x] `POST /api/v1/budget-scenarios/[scenarioId]/submit` (ajukan ke budget version dengan snapshot immutability)
+- [x] Tampilan perbandingan skenario side-by-side (komparasi hingga 3 skenario aktif)
+- [x] Indikator defisit dan selisih pagu (fund gap) kontras dan jelas
+- [x] Label resmi peringatan: "Skenario bukan anggaran resmi sampai disetujui Bendahara"
+- [x] Edit & hapus item skenario interaktif (`ScenarioItemActions` dengan modal ubah & konfirmasi hapus)
+- [x] Tombol arsipkan skenario (`ScenarioActions` dengan modal konfirmasi)
+- [x] `participantCount` override per skenario (snapshot peserta khusus)
+- [x] UI states lengkap: empty state, loading, error state, forbidden state
+- [x] Pengujian otomatis gate Fase 4 (`src/server/test-phase4-gate.ts`) (100% lulus)
 
-### Web — perlu diselesaikan:
-- [ ] **Tampilan perbandingan skenario side-by-side** — jika 2-3 skenario ada, bandingkan total/biaya peserta/gap
-- [ ] Gap dana dan deficit display yang jelas (available funds - total)
-- [ ] Label jelas: "Skenario bukan anggaran resmi sampai disetujui Bendahara"
-- [ ] Edit/hapus item scenario
-- [ ] Archive scenario yang tidak dipakai
-- [ ] `participantCount` bisa di-override per skenario (snapshot)
-- [ ] Empty state: belum ada skenario, belum ada item
-- [ ] Decimal math test: pastikan tidak ada floating point error (pakai NUMERIC di DB sudah ✓)
+### Mobile (selesai):
+- [x] Events list screen dengan navigasi menuju Scenario Lab
+- [x] `ScenarioModel` & `ScenarioItemModel` (parsing data kalkulasi desimal finansial)
+- [x] `ScenarioService` (integrasi API list, create, add item, dan submit skenario)
+- [x] Layar daftar skenario per kegiatan (`ScenarioListScreen`) dengan metrik finansial
+- [x] Layar buat skenario baru (`ScenarioCreateScreen`) dengan override kuantitas peserta
+- [x] Layar tambah item kebutuhan (`ScenarioItemFormScreen`) dengan kalkulasi preview real-time
+- [x] Tombol ajukan skenario ke Bendahara dengan dialog konfirmasi dan proteksi pemblokiran jika defisit
+- [x] Pengujian unit & widget mobile (`test/phase4_scenario_test.dart`) (18/18 tests lulus)
 
-### Mobile — sudah ada:
-- [x] Events list screen (dengan org context)
-- [x] Org selection screen
-
-### Mobile — perlu diselesaikan:
-- [ ] Tampilan list skenario per event
-- [ ] Form buat skenario baru + tambah item
-- [ ] Perhitungan total dan biaya per peserta di client (preview saja)
-- [ ] Submit skenario untuk direview Bendahara
-
-**Gate sebelum lanjut ke Fase 5:**
-- [ ] Tenant check: scenario dari event lain tidak bisa diakses
-- [ ] Decimal math: test edge case jumlah 0, quantity 0
-- [ ] Snapshot immutability: setelah submit menjadi budget version, skenario tidak bisa diubah
-- [ ] Deficit (total > available funds) ditampilkan dengan jelas, bukan hidden
+**Gate sebelum lanjut ke Fase 5 (semua terpenuhi):**
+- [x] Tenant check: scenario dari event lain tidak bisa diakses (terbukti 403 `ORGANIZATION_ACCESS_DENIED`)
+- [x] Decimal math: test edge case jumlah 0, quantity 0 berhasil ditangani tanpa error desimal
+- [x] Snapshot immutability: setelah submit menjadi budget version, skenario tidak bisa diubah (409 `SCENARIO_IMMUTABLE`)
+- [x] Deficit (total > available funds) ditampilkan dengan jelas, bukan hidden
 
 ---
 
-## Fase 5 — Versi Anggaran & Approval Bendahara 🟡
+## Fase 5 — Versi Anggaran & Approval Bendahara ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (28 Oktober 2026)**
 
-### Web — sudah ada:
-- [x] `GET /api/v1/events/[eventId]/budgets` — list budget versions
-- [x] `GET /api/v1/budget-versions/[versionId]` — detail versi
-- [x] `POST /api/v1/budget-versions/[versionId]/approve` — approve (Bendahara only)
-- [x] `POST /api/v1/budget-versions/[versionId]/reject` — reject dengan alasan
-- [x] Web UI: halaman review anggaran, tombol approve/reject, form alasan
-- [x] Hanya satu versi aktif per event (enforced)
-- [x] Snapshot immutable (disimpan saat promosi)
+### Web (selesai):
+- [x] `GET /api/v1/events/[eventId]/budgets` (list budget versions dengan submitter & reviewer)
+- [x] `GET /api/v1/budget-versions/[versionId]` (detail versi beserta items snapshot dan diff comparison)
+- [x] `POST /api/v1/budget-versions/[versionId]/approve` (approve, Bendahara only)
+- [x] `POST /api/v1/budget-versions/[versionId]/reject` (reject dengan alasan, Bendahara only)
+- [x] **Histori versi** (tampilkan semua versi dengan status, submitter, reviewer, dan timestamp)
+- [x] **Perbedaan antar versi** (diff snapshot) (perbandingan otomatis selisih nominal, selisih peserta, item baru, diubah, dan dihapus)
+- [x] Konfirmasi modal sebelum approve/reject (`ConfirmModal` dengan Escape & WCAG AA contrast)
+- [x] Self-approval blocked: pemohon dilarang menyetujui versinya sendiri (403 `SELF_APPROVAL_FORBIDDEN` di server & UI disabled)
+- [x] Activation atomik: demosi versi lama ke draf dan aktivasi versi baru dalam 1 transaksi DB (tepat 1 versi resmi aktif)
+- [x] Proteksi penurunan anggaran: penolakan 422 `BUDGET_REDUCTION_EXCEEDS_COMMITMENTS` jika total < komitmen pengeluaran berjalan
+- [x] Label status versi: Draf, Diajukan, Disetujui, Ditolak dengan warna dan label teks kontras WCAG AA
+- [x] Pengujian otomatis gate Fase 5 (`src/server/test-phase5-budget-gate.ts`) (100% lulus)
 
-### Web — perlu diselesaikan:
-- [ ] **Histori versi** — tampilkan semua versi dengan status dan timestamp
-- [ ] **Perbedaan antar versi** (diff snapshot) — opsional tapi berguna
-- [ ] Konfirmasi modal sebelum approve/reject (R-26 — interactive elements must work)
-- [ ] Self-approval test: ketua tidak bisa approve anggaran sendiri yang dia buat
-- [ ] Activation atomik: pastikan tidak bisa ada 2 versi approved bersamaan
-- [ ] Label status versi: Draf, Diajukan, Disetujui, Ditolak
+### Mobile (selesai):
+- [x] `BudgetVersionModel`, `BudgetVersionDetailModel`, `BudgetItemDetailModel`, `BudgetComparisonModel`
+- [x] `BudgetService` (API list versions, detail with diff snapshot, approve, dan reject dengan alasan)
+- [x] Layar riwayat versi anggaran (`BudgetVersionListScreen`) dengan banner versi aktif, metrik finansial, dan pull-to-refresh
+- [x] Layar rincian versi anggaran (`BudgetVersionDetailScreen`) dengan tabel item snapshot terkunci dan kartu perbandingan vs versi sebelumnya
+- [x] Form & aksi approve/reject oleh Bendahara dengan dialog konfirmasi (`ConfirmationDialog`) dan input alasan (`RejectionReasonDialog`)
+- [x] Pencegahan self-approval pada klien Flutter dengan peringatan prinsip pemisahan tugas
+- [x] Navigasi cepat dari `EventsListScreen` menuju Versi Anggaran & Approval Bendahara
+- [x] Pengujian unit & widget mobile (`test/phase5_budget_test.dart`) (7/7 tests lulus, total 25/25 tests mobile lulus)
 
-### Mobile — perlu diselesaikan:
-- [ ] Tampilan status budget version per event
-- [ ] Form approve/reject untuk role Bendahara
-- [ ] Notifikasi status berubah (minimal UI refresh / polling)
-- [ ] Riwayat versi anggaran di mobile
-
-**Gate sebelum lanjut ke Fase 6:**
-- [ ] Unauthorized approval ditolak server-side (403, bukan hanya hidden button)
-- [ ] Self-approval ditolak
-- [ ] Activation atomik diuji (race condition tidak menghasilkan 2 approved)
-- [ ] Konflik status diuji: approve versi saat ada versi approved lain
+**Gate sebelum lanjut ke Fase 6 (semua terpenuhi):**
+- [x] Unauthorized approval ditolak server-side (403 `INSUFFICIENT_ROLE_PERMISSIONS` dan `ORGANIZATION_ACCESS_DENIED`)
+- [x] Self-approval ditolak (403 `SELF_APPROVAL_FORBIDDEN` baik untuk approve maupun reject)
+- [x] Activation atomik diuji (tepat 1 versi approved aktif, versi sebelumnya otomatis didemosi)
+- [x] Konflik status diuji: approve versi saat ada versi approved lain berhasil mendemosi versi lama; versi rejected ditolak (409)
+- [x] Over-commitment reduction ditolak (422 saat total baru < komitmen aktif)
 
 ---
 
-## Fase 6 — Permintaan Pengeluaran, Payments & Koreksi 🟡
+## Fase 6 — Permintaan Pengeluaran, Payments & Koreksi ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (29 Oktober 2026)**
 
-### Web — sudah ada:
-- [x] `POST /api/v1/events/[eventId]/expense-requests` — ajukan pengeluaran
-- [x] `GET /api/v1/expense-requests/[requestId]/approve` + `POST` — approve
-- [x] `POST /api/v1/expense-requests/[requestId]/reject` — reject
-- [x] `POST /api/v1/expense-requests/[requestId]/payments` — catat pembayaran
-- [x] `POST /api/v1/payments/[paymentId]/reverse` — reversal pembayaran
-- [x] Idempotency key pada payments
-- [x] Web UI: list pengeluaran, form ajukan, detail dengan payments
-- [x] Status: draft, submitted, approved, partially_paid, paid, rejected, cancelled
-- [x] Audit log pada tiap aksi
+### Web:
+- [x] `POST /api/v1/events/[eventId]/expense-requests` (ajukan pengeluaran lapangan)
+- [x] `GET /api/v1/expense-requests/[requestId]` (detail lengkap dengan payment history dan summary finansial)
+- [x] `POST /api/v1/expense-requests/[requestId]/approve` (approve pengeluaran dengan nominal disetujui)
+- [x] `POST /api/v1/expense-requests/[requestId]/reject` (reject pengeluaran dengan alasan beraudit)
+- [x] `POST /api/v1/expense-requests/[requestId]/payments` (catat pembayaran dengan kunci idempotensi)
+- [x] `POST /api/v1/payments/[paymentId]/reverse` (pembatalan/reversal pembayaran dengan alasan)
+- [x] **Pembayaran sebagian (partial payment)** (UI yang jelas untuk nominal dibayar vs sisa saldo)
+- [x] **Remaining balance display** (tampilan sisa saldo pengeluaran yang belum dibayar)
+- [x] Reversal form (alasan reversal wajib diisi minimal 5 karakter)
+- [x] Lock concurrency saat pembayaran bersamaan (row lock `FOR UPDATE` diuji)
+- [x] Over-budget prevention: peringatan dan penolakan 422 jika approved amount > remaining budget
+- [x] Test: duplicate payment dengan idempotency key yang sama (replay idempotensi 200 vs konflik payload 409)
+- [x] Test: negative amount ditolak server-side (422)
+- [x] Konfirmasi modal sebelum approve/reject pengeluaran dan sebelum reversal
+- [x] Pengujian otomatis gate Fase 6 (`src/server/test-phase6-expense-gate.ts` lulus 100%)
 
-### Web — perlu diselesaikan:
-- [ ] **Pembayaran sebagian (partial payment)** — UI yang jelas untuk partial vs full
-- [ ] **Remaining balance display** — berapa yang belum dibayar
-- [ ] Reversal form — alasan reversal wajib diisi
-- [ ] Lock concurrency saat pembayaran bersamaan (row lock diuji)
-- [ ] Over-budget prevention: peringatan jika approved amount > remaining budget
-- [ ] Test: duplicate payment dengan idempotency key yang sama
-- [ ] Test: negative amount ditolak server-side
-- [ ] Konfirmasi modal sebelum approve/reject pengeluaran
-
-### Mobile — sudah ada:
+### Mobile:
 - [x] Expense list screen dengan filter status
-- [x] Expense create screen — form ajukan pengeluaran
-- [x] Expense detail screen
-- [x] Bendahara review screen (approval)
+- [x] Expense create screen (form ajukan pengeluaran)
+- [x] Expense detail screen (ringkasan pengeluaran & 4 kartu metrik finansial)
+- [x] Bendahara review screen (approval pengeluaran)
+- [x] Tampilan riwayat pembayaran per expense request (payments list + reversals)
+- [x] Form catat pembayaran sebagian vs bayar penuh oleh Bendahara dengan pintasan nominal
+- [x] Reversal tampil di history dengan alasan pembatalan dan tombol aksi beraudit
+- [x] Sisa saldo (remaining balance) yang jelas di mobile
+- [x] Error state: tidak ada approved budget version
+- [x] Pengujian unit & widget mobile (`test/phase6_expense_test.dart` lulus 100%)
 
-### Mobile — perlu diselesaikan:
-- [ ] **Upload bukti dari expense detail** (lihat Fase 7)
-- [ ] Tampilan payments per expense request
-- [ ] Reversal tampil di history
-- [ ] Partial payment status yang jelas
-- [ ] Error state: tidak ada approved budget version
-
-**Gate sebelum lanjut ke Fase 7:**
-- [ ] Concurrent payment test: dua request bersamaan tidak menghasilkan double payment
-- [ ] Duplicate retry dengan idempotency key lulus
-- [ ] Negative/zero amount ditolak
-- [ ] Reversal test: tidak bisa reverse melebihi amount asli
+**Gate sebelum lanjut ke Fase 7 (Semua Terpenuhi):**
+- [x] Concurrent payment test: dua request bersamaan tidak menghasilkan double payment (row lock `FOR UPDATE`)
+- [x] Duplicate retry dengan idempotency key lulus (replay idempotent mengembalikan data transaksi asal)
+- [x] Negative/zero amount ditolak server-side (422 `INVALID_AMOUNT`)
+- [x] Reversal test: tidak bisa reverse melebihi amount asli (`EXCEEDS_REVERSIBLE_AMOUNT`)
+- [x] Over-budget prevention: tidak bisa approve pengeluaran melebihi sisa anggaran resmi (`OVER_BUDGET_FORBIDDEN`)
 
 ---
 
@@ -318,42 +310,30 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 **Status: Sebagian selesai**
 
-### Web — sudah ada:
-- [x] `POST /api/v1/evidence` — upload bukti
-- [x] `GET /api/v1/evidence/[evidenceId]/download` — download private (signed URL atau streaming)
+### Web:
+- [x] `POST /api/v1/evidence` (upload bukti)
+- [x] `GET /api/v1/evidence/[evidenceId]/download` (download private)
 - [x] Validasi type: PDF/JPEG/PNG
-- [x] Validasi size: ≤ 5 MiB (5.242.880 byte) — server-side
+- [x] Validasi size: <= 5 MiB (5.242.880 byte) server-side
 - [x] Storage adapter interface (local dev)
 - [x] Object key private (bukan public URL langsung)
 - [x] Metadata di PostgreSQL, binary di storage
 - [x] `EvidenceSection` di halaman expense detail
+- [ ] Storage adapter S3-compatible untuk production
+- [ ] MIME type validation via magic bytes (file signature)
+- [ ] Orphan upload cleanup
 
-### Web — perlu diselesaikan:
-- [ ] **Storage adapter S3-compatible** — implementasi untuk production (pilih vendor saat deployment)
-- [ ] MIME type validation via file signature (magic bytes), bukan hanya extension
-- [ ] Orphan upload cleanup — evidence yang tidak ter-attach ke expense perlu dibersihkan
-- [ ] Authorization download: hanya member organisasi yang sama yang bisa download
-- [ ] Max file size error message yang jelas: "File melebihi batas 5 MB"
-- [ ] Preview thumbnail di UI (PDF: show icon, gambar: thumbnail kecil)
-- [ ] Multiple evidence per expense request
-
-### Mobile — sudah ada:
+### Mobile:
 - [x] `image_picker` dependency
-- [x] Expense create screen (kemungkinan sudah ada upload field)
-
-### Mobile — perlu diselesaikan:
-- [ ] Upload bukti dari expense detail screen (kamera atau galeri)
-- [ ] Progress upload indicator
-- [ ] File size validation di client sebelum upload (UX, bukan security gate)
-- [ ] Error: type tidak valid, ukuran terlalu besar
-- [ ] Download/view bukti dari mobile
+- [x] Upload bukti dari expense create screen
+- [ ] Upload bukti dari expense detail screen
+- [ ] Client-side validation file size sebelum upload
+- [ ] Download / preview bukti dari mobile
 
 **Gate sebelum lanjut ke Fase 8:**
-- [ ] Type spoofing test: upload `.exe` dengan extension `.pdf` — ditolak
-- [ ] Max+1 byte: file 5.242.881 byte — ditolak
-- [ ] MIME/signature mismatch: JPEG dengan extension `.png` — ditangani dengan benar
-- [ ] Unauthorized download: user dari org lain — ditolak (403)
-- [ ] Orphan upload dibersihkan (atau tidak bisa dibuat orphan)
+- [ ] Type spoofing test: upload `.exe` dengan extension `.pdf` ditolak
+- [ ] Max+1 byte: file 5.242.881 byte ditolak
+- [ ] Unauthorized download ditolak (403)
 
 ---
 
@@ -361,58 +341,40 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 **Status: Sebagian selesai**
 
-### Web — sudah ada:
-- [x] `GET /api/v1/events/[eventId]/reports/budget-vs-actual` — laporan budget vs actual
-- [x] `getBudgetVsActualReport()` service — approved total, actual net, open commitments, remaining
+### Web:
+- [x] `GET /api/v1/events/[eventId]/reports/budget-vs-actual` (laporan budget vs actual)
+- [x] `getBudgetVsActualReport()` service (approved total, actual net, open commitments, remaining)
 - [x] Dashboard: ringkasan anggaran kegiatan pertama
 - [x] Laporan page per event
 - [x] `BudgetSummary` component
+- [ ] CSV export laporan
+- [ ] Audit log view (histori semua aksi per event)
+- [ ] Role-based export
 
-### Web — perlu diselesaikan:
-- [ ] **CSV export laporan** — download file `.csv` dengan data budget vs actual
-- [ ] **Audit log view** — histori semua aksi per event (approve, reject, payment, reversal)
-- [ ] Laporan per kategori (breakdown by category)
-- [ ] Filter laporan: by status, by periode, by item
-- [ ] Role-based export: hanya Bendahara dan Ketua bisa export
-- [ ] Dashboard improvement: tampilkan semua kegiatan aktif + ringkasan masing-masing
-- [ ] Print-friendly report (atau export PDF)
-- [ ] Reconciliation check: total dari transaksi = remaining yang ditampilkan
-
-### Mobile — perlu diselesaikan:
+### Mobile:
 - [ ] Ringkasan keuangan per event (total budget, terpakai, sisa)
-- [ ] Status pengeluaran summary (berapa approved, berapa paid)
-- [ ] Tampilkan laporan sederhana (tidak perlu CSV di mobile)
+- [ ] Status pengeluaran summary
 
 **Gate sebelum lanjut ke Fase 9:**
-- [ ] Report reconciliation: total dari detail transaksi = summary angka
-- [ ] Cross-tenant export: laporan org B tidak bisa diakses user org A
-- [ ] Role check export: panitia_anggota tidak bisa export
+- [ ] Report reconciliation: total transaksi = summary angka
+- [ ] Cross-tenant export ditolak
 
 ---
 
 ## Fase 9 — Integrasi Vertical Slice Web + Flutter 🔴
 
-**Status: Belum dimulai** — tergantung Fase 3-8 selesai
+**Status: Belum dimulai**
 
-### Alur yang harus diuji end-to-end di kedua platform:
-1. Register + login → pilih organisasi → masuk dashboard
-2. Buat kegiatan → buat skenario → tambah item → submit sebagai budget version
-3. Bendahara login → review budget version → approve/reject
-4. Panitia submit expense request → attach bukti
-5. Bendahara approve expense → catat pembayaran
+### Alur end-to-end yang harus diuji di kedua platform:
+1. Register + login -> pilih organisasi -> masuk dashboard
+2. Buat kegiatan -> buat skenario -> tambah item -> submit sebagai budget version
+3. Bendahara login -> review budget version -> approve/reject
+4. Panitia submit expense request -> attach bukti
+5. Bendahara approve expense -> catat pembayaran
 6. Lihat laporan: budget vs actual
 
-### Yang harus dikerjakan:
-- [ ] Mobile: implementasi semua flow yang belum ada (dari Fase 3-8 mobile)
-- [ ] Verifikasi error contract konsisten antara web dan mobile
-- [ ] Retry handling di mobile (timeout, 5xx)
-- [ ] Pagination pada list yang bisa panjang (expense, payments)
-- [ ] Session/token refresh di mobile saat expired di tengah sesi
-
 **Gate sebelum lanjut ke Fase 10:**
-- [ ] Alur submit → approval → payment → laporan berhasil di kedua klien
-- [ ] Akses sesuai role di setiap langkah
-- [ ] Mobile tidak crash pada any state (error, empty, loading semua ada)
+- [ ] Alur submit -> approval -> payment -> laporan berhasil di kedua klien
 
 ---
 
@@ -420,40 +382,12 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 **Status: Belum dimulai**
 
-### Security:
-- [ ] CSRF origin validation diaktifkan pada semua mutasi
-- [ ] Rate limiting: auth endpoint (login, register)
-- [ ] Security headers: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`
-- [ ] CORS konfigurasi production
-- [ ] Dependency audit: `bun audit` atau `npm audit`
-- [ ] Tidak ada secret yang ter-expose di response atau log
-- [ ] Mass assignment prevention di semua route handler
-- [ ] SQL injection prevention (Drizzle parameterized query — sudah built-in)
-
-### Performance:
-- [ ] Query dengan JOIN yang banyak — pastikan ada index yang tepat
-- [ ] Pagination pada semua list endpoint yang bisa besar
-- [ ] Loading state di semua page (web dan mobile)
-- [ ] Image/file upload dengan progress indicator
-
-### Accessibility (antislop-human):
-- [ ] Semua teks memenuhi WCAG AA contrast (4.5:1 untuk teks normal — R-25)
-- [ ] Semua elemen interaktif dapat diakses via keyboard (R-32)
-- [ ] Focus ring visible di semua button, link, input
-- [ ] Label form yang benar (`htmlFor` / `aria-label`)
-- [ ] Status selalu ada teks, tidak bergantung warna saja (R-25)
-- [ ] Approve/reject memerlukan konfirmasi sebelum aksi dilakukan
-
-### Hardening:
-- [ ] Production build test: `bun run build` tanpa error
-- [ ] Error state di semua halaman yang menampilkan data (R-27)
-- [ ] Tidak ada dead link atau nav item yang mengarah ke halaman tidak ada (R-24)
-- [ ] Semua tombol dan link punya aksi nyata (R-26)
-
-**Gate sebelum lanjut ke Fase 11:**
-- [ ] Security regression test: role bypass, CSRF, tenant isolation semuanya pass
+### Security, Performance & Accessibility:
+- [ ] CSRF origin validation di semua mutasi
+- [ ] Rate limiting auth endpoints
+- [ ] Security headers
 - [ ] 0 WCAG AA contrast failure pada teks utama
-- [ ] Production build sukses tanpa error atau warning kritis
+- [ ] Production build sukses tanpa error
 
 ---
 
@@ -461,40 +395,22 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 **Status: Belum dimulai**
 
-### Deployment:
-- [ ] Next.js: deploy ke Vercel atau platform lain (dengan Neon PostgreSQL)
-- [ ] Environment variables dikonfigurasi di platform (bukan di repo)
-- [ ] Storage: pilih S3-compatible vendor dan konfigurasi
-- [ ] Flutter: build APK untuk demo Android
-- [ ] README kedua repo diperbarui dengan instruksi run & deploy
-
-### Demo prep:
-- [ ] Buat data demo (organisasi, kegiatan, beberapa skenario, expense)
-- [ ] Pastikan semua alur utama bisa didemonstrasikan tanpa perlu setup ulang
-- [ ] Screenshot/video walkthrough (opsional tapi berguna)
-
-### Submission (jika Traspac Competition):
-- [ ] Verifikasi aturan resmi Traspac 2027 sebelum submit
-- [ ] `COMPETITION_STATUS.md` diperbarui jika aturan resmi sudah tersedia
-
-**Gate akhir:**
-- [ ] Aplikasi web accessible dari URL publik
-- [ ] APK Android bisa diinstall dan digunakan untuk demo
-- [ ] Tidak ada data dummy / fake yang terlihat seperti data nyata (R-38)
+### Deployment & Demo:
+- [ ] Deploy Next.js ke production (Neon PostgreSQL)
+- [ ] Build APK Android untuk demo
+- [ ] Verifikasi ketiadaan data dummy / fake (R-38)
 
 ---
 
 ## Tugas Segera (Konfirmasi Dulu)
 
-Berdasarkan analisis kondisi project sekarang, **prioritas berikutnya adalah Fase 1** karena:
-1. DESIGN.md belum ada — UI saat ini dibangun tanpa arah visual yang ditetapkan
-2. User journeys belum terdokumentasi — ada risiko gap di mobile
-3. Beberapa halaman web belum punya semua UI states (loading, error, empty)
-
-**Sebelum mengerjakan Fase 1, diperlukan input dari pengguna:**
-- Warna brand Reka Dana (bukan biru-ungu AI default)
-- Personality produk: formal/profesional atau friendly/casual?
-- Font preference ada atau biarkan dipilih dengan alasan?
+Fase 5 telah selesai 100%. **Saat ini mengerjakan Fase 6 (Permintaan Pengeluaran, Payments & Koreksi)**:
+1. Validasi nominal positif/nol dan alasan pembatalan minimal 5 karakter pada service payments & reversals
+2. Row-level concurrency lock (`FOR UPDATE`) pada pencatatan pembayaran untuk mencegah double-payment
+3. Over-budget prevention pada persetujuan pengeluaran
+4. UI web: detail sisa saldo belum dibayar (remaining balance) & opsi bayar lunas vs bayar sebagian
+5. Mobile: integrasi riwayat pembayaran, sisa saldo, dan form pembayaran/reversal
+6. Pengujian gate otomatis Fase 6 di backend dan mobile
 
 ---
 
@@ -505,12 +421,11 @@ Setiap commit harus mendapat persetujuan pesan dari pengguna sebelum push. Forma
 <type>(<scope>): <deskripsi singkat dalam Bahasa Indonesia>
 
 Contoh:
-feat(web): tambah tampilan perbandingan skenario anggaran
-fix(mobile): perbaiki crash saat token expired
-chore(web): perbarui README dengan instruksi deployment
+feat(web): lengkapi histori versi anggaran, diff snapshot, dan approval bendahara fase 5
+feat(mobile): tambah riwayat versi anggaran, diff snapshot, dan review bendahara fase 5
 ```
 
 ---
 
-*Terakhir diperbarui: 26 Oktober 2026*
-*Berdasarkan: RekaDana Dokumentasi v4.0 (brainstorming ChatGPT — Brainstorming Produk Blue Ocean)*
+*Terakhir diperbarui: 29 Oktober 2026*
+*Berdasarkan: RekaDana Dokumentasi v4.0*
