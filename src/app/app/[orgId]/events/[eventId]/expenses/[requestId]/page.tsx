@@ -5,11 +5,12 @@ import { ForbiddenState, EmptyState } from "@/components/ui/States";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { formatRupiah, formatWaktu } from "@/lib/utils";
 import { db } from "@/server/db";
-import { expenseRequests, payments, paymentReversals, evidenceFiles } from "@/server/db/schema";
+import { evidenceFiles } from "@/server/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { getExpenseRequestDetail } from "@/server/modules/expenses.service";
 import { ExpenseActions } from "../ExpenseActions";
 import { EvidenceSection } from "./EvidenceSection";
-import { ArrowLeft, CreditCard, RotateCcw } from "lucide-react";
+import { ArrowLeft, CreditCard, RotateCcw, CheckCircle2, AlertCircle, Clock, User, Tag } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -31,18 +32,14 @@ export default async function ExpenseDetailPage({ params }: Props) {
 
   const { membership } = access;
 
-  const [req] = await db
-    .select()
-    .from(expenseRequests)
-    .where(eq(expenseRequests.id, requestId))
-    .limit(1);
+  let detail: Awaited<ReturnType<typeof getExpenseRequestDetail>>;
+  try {
+    detail = await getExpenseRequestDetail(session.user.id, requestId);
+  } catch {
+    return <ForbiddenState />;
+  }
 
-  if (!req) return <ForbiddenState />;
-
-  const paymentList = await db
-    .select()
-    .from(payments)
-    .where(eq(payments.expenseRequestId, requestId));
+  const { request: req, payments: paymentList, summary } = detail;
 
   const evidenceList = await db
     .select({
@@ -57,65 +54,121 @@ export default async function ExpenseDetailPage({ params }: Props) {
     .orderBy(desc(evidenceFiles.createdAt));
 
   const isBendahara = membership.role === "bendahara";
-  const canPay = isBendahara && (req.status === "approved" || req.status === "partially_paid");
+  const canPay = isBendahara && (req.status === "approved" || req.status === "partially_paid") && summary.remainingBalance > 0;
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Header & Navigasi */}
       <div>
         <Link
           href={`/app/${orgId}/events/${eventId}/expenses`}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 mb-3"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#153D35] hover:underline mb-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A] focus-visible:rounded"
         >
           <ArrowLeft size={13} />
-          Kembali ke daftar
+          Kembali ke daftar pengeluaran
         </Link>
-        <h1 className="text-xl font-bold text-slate-900">{req.title}</h1>
-        <div className="flex items-center gap-3 mt-1.5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-bold text-[#153D35]">{req.title}</h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Clock size={12} className="text-slate-400" />
+                Diajukan {formatWaktu(req.createdAt)}
+                {req.requestedByName ? ` oleh ${req.requestedByName}` : ""}
+              </span>
+              {req.budgetItemName && (
+                <span className="flex items-center gap-1 text-[#153D35] font-medium bg-[#EAF5F0] px-2 py-0.5 rounded-[4px]">
+                  <Tag size={11} className="text-[#35B88A]" />
+                  Pos: {req.budgetItemName}
+                  {req.budgetItemCategory ? ` (${req.budgetItemCategory})` : ""}
+                </span>
+              )}
+            </div>
+          </div>
           <StatusChip status={req.status as any} />
-          <span className="text-xs text-slate-400">{formatWaktu(req.createdAt)}</span>
         </div>
       </div>
 
-      {/* Nominal summary */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-          <p className="text-xs text-slate-400">Nominal diajukan</p>
-          <p className="mt-1 font-bold tabular-nums text-slate-900">{formatRupiah(req.requestedAmount)}</p>
+      {/* Ringkasan Finansial 4 Metrik */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-[10px] border border-[#D1E8DF] bg-white px-4 py-3 shadow-sm">
+          <p className="text-xs font-medium text-slate-500">Nominal Diajukan</p>
+          <p className="mt-1 font-bold tabular-nums text-slate-900 text-base">{formatRupiah(req.requestedAmount)}</p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-          <p className="text-xs text-slate-400">Nominal disetujui</p>
-          <p className="mt-1 font-bold tabular-nums text-slate-900">
+
+        <div className="rounded-[10px] border border-[#D1E8DF] bg-white px-4 py-3 shadow-sm">
+          <p className="text-xs font-medium text-slate-500">Nominal Disetujui</p>
+          <p className="mt-1 font-bold tabular-nums text-[#153D35] text-base">
             {req.approvedAmount ? formatRupiah(req.approvedAmount) : "-"}
           </p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-          <p className="text-xs text-slate-400">Total sudah dibayar</p>
-          <p className="mt-1 font-bold tabular-nums text-slate-900">
-            {formatRupiah(
-              paymentList.reduce((sum, p) => sum + parseFloat(p.amount), 0).toFixed(2)
-            )}
+
+        <div className="rounded-[10px] border border-[#D1E8DF] bg-white px-4 py-3 shadow-sm">
+          <p className="text-xs font-medium text-slate-500">Total Dibayar (Net)</p>
+          <p className="mt-1 font-bold tabular-nums text-slate-900 text-base">
+            {formatRupiah(summary.totalPaidNet)}
+          </p>
+        </div>
+
+        <div
+          className={`rounded-[10px] border px-4 py-3 shadow-sm ${
+            summary.remainingBalance <= 0 && req.approvedAmount
+              ? "border-[#35B88A] bg-[#EAF5F0]/60"
+              : summary.remainingBalance > 0 && summary.totalPaidNet > 0
+              ? "border-amber-300 bg-amber-50/50"
+              : "border-[#D1E8DF] bg-white"
+          }`}
+        >
+          <p className="text-xs font-medium text-slate-500">Sisa Belum Dibayar</p>
+          <p
+            className={`mt-1 font-bold tabular-nums text-base ${
+              summary.remainingBalance <= 0 && req.approvedAmount
+                ? "text-[#065F46]"
+                : summary.remainingBalance > 0
+                ? "text-amber-800"
+                : "text-slate-800"
+            }`}
+          >
+            {req.approvedAmount
+              ? summary.remainingBalance <= 0
+                ? "Rp 0 (Lunas)"
+                : formatRupiah(summary.remainingBalance)
+              : "-"}
           </p>
         </div>
       </div>
 
+      {/* Deskripsi Pengajuan */}
       {req.description && (
-        <div className="rounded-xl border border-slate-200 bg-white px-5 py-4">
-          <p className="text-xs font-semibold text-slate-500 mb-1">Deskripsi</p>
+        <div className="rounded-[10px] border border-slate-200 bg-white px-5 py-4 shadow-sm">
+          <p className="text-xs font-semibold text-slate-500 mb-1">Deskripsi Keperluan Lapangan</p>
           <p className="text-sm text-slate-700 whitespace-pre-wrap">{req.description}</p>
         </div>
       )}
 
-      {req.status === "rejected" && req.rejectionReason && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4">
-          <p className="text-xs font-semibold text-red-700 mb-1">Alasan penolakan</p>
-          <p className="text-sm text-red-600">{req.rejectionReason}</p>
+      {/* Reviewer info jika sudah direview */}
+      {req.reviewedAt && (
+        <div className="flex items-center gap-2 rounded-[8px] bg-slate-50 border border-slate-200 px-4 py-2.5 text-xs text-slate-600">
+          <User size={13} className="text-slate-500" />
+          <span>
+            {req.status === "rejected" ? "Ditolak" : "Disetujui"} oleh {req.reviewedByName ?? "Bendahara"} pada{" "}
+            {formatWaktu(req.reviewedAt)}
+          </span>
         </div>
       )}
 
-      {/* Approve/Reject actions */}
+      {/* Alasan Penolakan jika ada */}
+      {req.status === "rejected" && req.rejectionReason && (
+        <div className="rounded-[8px] border border-red-200 bg-[#FEE2E2]/60 px-5 py-4">
+          <p className="text-xs font-bold text-[#991B1B] mb-1">Catatan Alasan Penolakan dari Bendahara</p>
+          <p className="text-sm text-[#991B1B] font-medium">{req.rejectionReason}</p>
+        </div>
+      )}
+
+      {/* Tindakan Persetujuan Bendahara jika status submitted */}
       {req.status === "submitted" && (
-        <div className="rounded-xl border border-slate-200 bg-white px-5 py-4">
-          <p className="text-sm font-semibold text-slate-700 mb-3">Tindakan Bendahara</p>
+        <div className="rounded-[10px] border border-[#D1E8DF] bg-white px-5 py-4 shadow-sm">
+          <p className="text-sm font-bold text-[#153D35] mb-3">Tindakan Verifikasi Bendahara</p>
           <ExpenseActions
             requestId={req.id}
             requestedAmount={req.requestedAmount}
@@ -127,17 +180,23 @@ export default async function ExpenseDetailPage({ params }: Props) {
             eventId={eventId}
           />
           {!isBendahara && (
-            <p className="text-xs text-slate-400">Menunggu review Bendahara.</p>
+            <p className="text-xs text-slate-500">Pengajuan ini sedang menunggu tinjauan dan persetujuan oleh Bendahara.</p>
           )}
         </div>
       )}
 
-      {/* Post payment button */}
+      {/* Tombol Catat Pembayaran untuk Bendahara */}
       {canPay && (
-        <div>
+        <div className="flex items-center justify-between rounded-[10px] border border-[#35B88A]/30 bg-[#EAF5F0] p-4">
+          <div>
+            <p className="text-sm font-bold text-[#153D35]">Pembayaran Lapangan Tersedia</p>
+            <p className="text-xs text-slate-600">
+              Sisa saldo yang dapat dibayarkan: <strong className="tabular-nums text-[#153D35]">{formatRupiah(summary.remainingBalance)}</strong>.
+            </p>
+          </div>
           <Link
             href={`/app/${orgId}/events/${eventId}/expenses/${requestId}/pay`}
-            className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="inline-flex items-center gap-2 rounded-[6px] bg-[#153D35] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A4D43] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A] transition-colors"
           >
             <CreditCard size={15} />
             Catat Pembayaran
@@ -145,73 +204,105 @@ export default async function ExpenseDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* Payment history */}
+      {/* Riwayat Pembayaran & Reversal */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-semibold text-slate-700">Riwayat Pembayaran</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-bold text-[#153D35]">Riwayat Pembayaran & Bukti Pengeluaran</p>
+          <span className="text-xs text-slate-500">Tercatat dalam audit log transaksi</span>
+        </div>
+
         {paymentList.length === 0 ? (
           <EmptyState
             icon={<CreditCard size={32} className="text-slate-300" />}
-            title="Belum ada pembayaran"
-            description="Pembayaran dicatat oleh Bendahara setelah permintaan disetujui."
+            title="Belum ada transaksi pembayaran"
+            description="Pembayaran dapat dicatat oleh Bendahara setelah pengajuan pengeluaran disetujui."
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <div className="overflow-x-auto rounded-[10px] border border-[#D1E8DF] bg-white shadow-sm">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-700">Nominal</th>
-                  <th className="px-4 py-3 font-semibold text-slate-700">Waktu</th>
-                  <th className="px-4 py-3 font-semibold text-slate-700">Status</th>
-                  <th className="px-4 py-3 font-semibold text-slate-700">Catatan</th>
+                <tr className="border-b border-[#D1E8DF] bg-[#F6F8F7] text-left">
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold text-[#153D35]">Nominal Pembayaran</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold text-[#153D35]">Waktu & Pencatat</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold text-[#153D35]">Status Pembayaran</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold text-[#153D35]">Catatan</th>
                   {isBendahara && (
-                    <th className="px-4 py-3 font-semibold text-slate-700">Aksi</th>
+                    <th scope="col" className="px-4 py-3 text-xs font-semibold text-[#153D35] text-right">Aksi</th>
                   )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {paymentList.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono tabular-nums text-slate-900">
-                      {formatRupiah(p.amount)}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
-                      {formatWaktu(p.postedAt)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {p.isReversed ? (
-                        <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
-                          Dibatalkan
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
-                          Dicatat
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">
-                      {p.notes ?? "-"}
-                    </td>
-                    {isBendahara && (
+                {paymentList.map((p) => {
+                  const hasReversals = p.reversals.length > 0;
+
+                  return (
+                    <tr key={p.id} className="hover:bg-slate-50/60">
                       <td className="px-4 py-3">
-                        {!p.isReversed && (
-                          <Link
-                            href={`/app/${orgId}/events/${eventId}/expenses/${requestId}/payments/${p.id}/reverse`}
-                            className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 focus-visible:outline-none focus-visible:underline"
-                          >
-                            <RotateCcw size={12} />
-                            Batalkan
-                          </Link>
+                        <p className="font-semibold tabular-nums text-[#153D35]">
+                          {formatRupiah(p.amount)}
+                        </p>
+                        {hasReversals && !p.isReversed && (
+                          <p className="text-xs font-medium text-amber-700 tabular-nums">
+                            Net: {formatRupiah(p.netAmount)}
+                          </p>
                         )}
                       </td>
-                    )}
-                  </tr>
-                ))}
+                      <td className="px-4 py-3 text-xs text-slate-600">
+                        <p className="font-medium text-slate-800">{formatWaktu(p.postedAt)}</p>
+                        <p className="text-slate-500">oleh {p.postedByName ?? "Bendahara"}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        {p.isReversed ? (
+                          <span className="inline-flex items-center gap-1 rounded-[6px] border border-red-200 bg-[#FEE2E2] px-2.5 py-0.5 text-xs font-semibold text-[#991B1B]">
+                            Dibatalkan Penuh
+                          </span>
+                        ) : hasReversals ? (
+                          <span className="inline-flex items-center gap-1 rounded-[6px] border border-amber-200 bg-[#FEF3C7] px-2.5 py-0.5 text-xs font-semibold text-[#92400E]">
+                            Dibatalkan Sebagian
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-[6px] border border-emerald-200 bg-[#D1FAE5] px-2.5 py-0.5 text-xs font-semibold text-[#065F46]">
+                            Lunas Dibukukan
+                          </span>
+                        )}
+
+                        {/* Rincian catatan reversal jika ada */}
+                        {hasReversals && (
+                          <div className="mt-2 flex flex-col gap-1 border-t border-slate-100 pt-1 text-xs">
+                            {p.reversals.map((rev) => (
+                              <div key={rev.id} className="rounded bg-slate-50 p-1.5 text-slate-600">
+                                <span className="font-semibold text-red-700">-{formatRupiah(rev.amount)}</span>: {rev.reason} (oleh {rev.reversedByName ?? "Bendahara"} pada {formatWaktu(rev.reversedAt)})
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-600 max-w-xs">
+                        {p.notes ?? "-"}
+                      </td>
+                      {isBendahara && (
+                        <td className="px-4 py-3 text-right">
+                          {!p.isReversed && (
+                            <Link
+                              href={`/app/${orgId}/events/${eventId}/expenses/${requestId}/payments/${p.id}/reverse`}
+                              className="inline-flex items-center gap-1 rounded-[6px] border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                            >
+                              <RotateCcw size={12} />
+                              Batalkan
+                            </Link>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
       </div>
-      {/* Evidence section */}
+
+      {/* Bagian Bukti Transaksi */}
       <EvidenceSection
         organizationId={orgId}
         expenseRequestId={requestId}
