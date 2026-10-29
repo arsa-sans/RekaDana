@@ -77,16 +77,20 @@ export function ErrorState({
   );
 }
 
-export function ForbiddenState() {
+export function ForbiddenState({
+  title = "Akses ditolak",
+  message = "Anda tidak memiliki izin untuk melihat halaman ini. Hubungi Ketua Kegiatan jika Anda yakin ini adalah kesalahan.",
+}: {
+  title?: string;
+  message?: string;
+} = {}) {
   return (
     <div
       role="alert"
       className="flex flex-col items-center justify-center gap-3 rounded-lg border border-amber-100 bg-amber-50 px-6 py-8 text-center"
     >
-      <p className="font-medium text-amber-700">Akses ditolak</p>
-      <p className="text-sm text-amber-600">
-        Anda tidak memiliki izin untuk melihat halaman ini. Hubungi Ketua Kegiatan jika Anda yakin ini adalah kesalahan.
-      </p>
+      <p className="font-medium text-amber-700">{title}</p>
+      <p className="text-sm text-amber-600">{message}</p>
     </div>
   );
 }
