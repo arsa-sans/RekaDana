@@ -1,10 +1,14 @@
-"use client";
-
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { RupiahInput } from "@/components/ui/RupiahInput";
-import { useToast } from "@/components/ui/Toast";
-import { AlertTriangle } from "lucide-react";
+import { redirect, notFound } from "next/navigation";
+import Link from "next/link";
+import { getSession } from "@/server/auth/session";
+import { requireEventAccess } from "@/server/authorization/tenant";
+import { db } from "@/server/db";
+import { payments, paymentReversals } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+import { ForbiddenState } from "@/components/ui/States";
+import { ReverseForm } from "./ReverseForm";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { formatRupiah } from "@/lib/utils";
 
 interface Props {
   params: Promise<{
@@ -15,118 +19,101 @@ interface Props {
   }>;
 }
 
-export default function ReversePage({ params: paramsPromise }: Props) {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
+export default async function ReversePage({ params }: Props) {
+  const session = await getSession();
+  if (!session) redirect("/login");
 
-  const [amount, setAmount] = useState("");
-  const [reason, setReason] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const { orgId, eventId, requestId, paymentId } = await params;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
+  let access: Awaited<ReturnType<typeof requireEventAccess>>;
+  try {
+    access = await requireEventAccess(session.user.id, eventId);
+  } catch {
+    return <ForbiddenState message="Anda tidak memiliki akses ke kegiatan ini." />;
+  }
 
-    if (!amount || parseFloat(amount) <= 0) {
-      setError("Nominal pembatalan harus lebih dari 0.");
-      return;
-    }
-    if (!reason.trim() || reason.trim().length < 5) {
-      setError("Alasan pembatalan wajib diisi minimal 5 karakter.");
-      return;
-    }
+  const { membership } = access;
+  if (membership.role !== "bendahara") {
+    return (
+      <ForbiddenState message="Hanya Bendahara yang berwenang melakukan pembatalan pembayaran." />
+    );
+  }
 
-    startTransition(async () => {
-      try {
-        const { orgId, eventId, requestId, paymentId } = await paramsPromise;
-        const res = await fetch(`/api/v1/payments/${paymentId}/reverse`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, reason: reason.trim() }),
-        });
+  const [payment] = await db
+    .select()
+    .from(payments)
+    .where(eq(payments.id, paymentId));
 
-        const json = await res.json();
+  if (!payment || payment.expenseRequestId !== requestId) {
+    notFound();
+  }
 
-        if (!res.ok) {
-          setError(json.error?.message ?? "Gagal membatalkan pembayaran.");
-          return;
-        }
+  const existingReversals = await db
+    .select()
+    .from(paymentReversals)
+    .where(eq(paymentReversals.paymentId, paymentId));
 
-        toast({ variant: "success", title: "Pembatalan pembayaran berhasil dicatat." });
-        router.push(`/app/${orgId}/events/${eventId}/expenses/${requestId}`);
-        router.refresh();
-      } catch {
-        setError("Terjadi kesalahan. Coba lagi.");
-      }
-    });
+  const paymentAmount = Number(payment.amount);
+  const totalReversed = existingReversals.reduce(
+    (sum, rev) => sum + Number(rev.amount),
+    0
+  );
+  const remainingReversible = Math.max(0, paymentAmount - totalReversed);
+
+  // Jika pembayaran sudah dibatalkan sepenuhnya
+  if (remainingReversible <= 0) {
+    return (
+      <div className="flex flex-col gap-6 max-w-xl">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 flex flex-col gap-3 shadow-xs">
+          <div className="flex items-center gap-2 text-slate-800 font-semibold text-base">
+            <CheckCircle2 size={18} className="text-emerald-600" />
+            Pembayaran Telah Dibatalkan Sepenuhnya
+          </div>
+          <p className="text-sm text-slate-600">
+            Seluruh nominal dari transaksi pembayaran ini ({formatRupiah(paymentAmount)}) telah dibatalkan (Total reversal: {formatRupiah(totalReversed)}). Tidak ada sisa nominal yang dapat dibatalkan lagi.
+          </p>
+          <div className="pt-2">
+            <Link
+              href={`/app/${orgId}/events/${eventId}/expenses/${requestId}`}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#153D35] underline hover:text-[#1A4D43]"
+            >
+              <ArrowLeft size={14} />
+              Kembali ke Rincian Pengeluaran
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">Pembayaran</p>
-        <h1 className="text-xl font-bold text-slate-900">Batalkan Pembayaran</h1>
-        <p className="text-sm text-slate-500">
-          Pembatalan (reversal) sebagian atau seluruh nominal pembayaran. Hanya Bendahara yang dapat melakukan ini.
+      <div className="flex flex-col gap-1">
+        <Link
+          href={`/app/${orgId}/events/${eventId}/expenses/${requestId}`}
+          className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors w-fit"
+        >
+          <ArrowLeft size={13} />
+          Kembali ke Rincian Pengeluaran
+        </Link>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Batalkan Pembayaran</h1>
+        <p className="text-sm text-slate-600">
+          Lakukan koreksi atau pembatalan (reversal) atas pembayaran yang telah dicatat sebelumnya.
         </p>
       </div>
 
-      <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
-        <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm text-amber-700">
-          Pembatalan bersifat permanen dan akan tercatat dalam jejak audit. Pastikan nominalnya benar sebelum melanjutkan.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-lg">
-        <div className="rounded-xl border border-slate-200 bg-white px-5 py-5 flex flex-col gap-5">
-          <RupiahInput
-            id="reverseAmount"
-            label="Nominal dibatalkan"
-            value={amount}
-            onChange={setAmount}
-            required
-          />
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="reason" className="text-sm font-semibold text-slate-700">
-              Alasan pembatalan <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              id="reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              rows={3}
-              placeholder="Jelaskan alasan pembatalan secara spesifik..."
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-              {error}
-            </p>
-          )}
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="rounded-md bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-          >
-            {isPending ? "Membatalkan..." : "Konfirmasi Pembatalan"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="rounded-md border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-          >
-            Batal
-          </button>
-        </div>
-      </form>
+      <ReverseForm
+        orgId={orgId}
+        eventId={eventId}
+        requestId={requestId}
+        paymentId={paymentId}
+        paymentAmount={paymentAmount}
+        totalReversed={totalReversed}
+        remainingReversible={remainingReversible}
+        paymentDate={payment.postedAt}
+        idempotencyKey={payment.idempotencyKey}
+        notes={payment.notes}
+      />
     </div>
   );
 }
