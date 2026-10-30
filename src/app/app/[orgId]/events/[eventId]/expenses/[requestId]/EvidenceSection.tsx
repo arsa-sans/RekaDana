@@ -33,11 +33,13 @@ export function EvidenceSection({ organizationId, expenseRequestId, items }: Pro
   const [isPending, startTransition] = useTransition();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const MAX_CLIENT_SIZE = 5_242_880; // 5 MiB, harus sinkron dengan server
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        toast({ variant: "error", title: "Ukuran file maksimal 10 MB." });
+      if (file.size > MAX_CLIENT_SIZE) {
+        toast({ variant: "error", title: "Ukuran file melebihi batas 5 MiB. Pilih file yang lebih kecil." });
         return;
       }
       setSelectedFile(file);
@@ -121,7 +123,7 @@ export function EvidenceSection({ organizationId, expenseRequestId, items }: Pro
 
       {/* Upload Box */}
       <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-        <label className="text-xs font-medium text-slate-600">Lampirkan bukti baru (PDF, JPG, PNG maks 10MB)</label>
+        <label className="text-xs font-medium text-slate-600">Lampirkan bukti baru (PDF, JPG, PNG maks 5 MiB)</label>
         <div className="flex flex-wrap items-center gap-2">
           <input
             ref={fileInputRef}
