@@ -15,11 +15,6 @@ interface Props {
   params: Promise<{ orgId: string; eventId: string }>;
 }
 
-/**
- * Halaman Scenario Lab: tabel komparasi skenario berdampingan.
- * Sorot selisih biaya, defisit, kebutuhan belum terdanai (DESIGN.md).
- * Seluruh data dari API nyata, tidak ada angka rekayasa (R-17).
- */
 export default async function ScenarioLabPage({ params }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
