@@ -15,11 +15,6 @@ interface Props {
   params: Promise<{ orgId: string }>;
 }
 
-/**
- * Dashboard utama per organisasi.
- * Menampilkan daftar kegiatan aktif dan ringkasan anggaran dari kegiatan pertama.
- * Tidak ada stat dummy, tidak ada angka rekayasa (R-17).
- */
 export default async function DashboardPage({ params }: Props) {
   const session = await getSession();
   if (!session) redirect("/login");
