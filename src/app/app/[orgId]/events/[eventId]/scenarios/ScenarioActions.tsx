@@ -14,10 +14,6 @@ interface Props {
   eventId: string;
 }
 
-/**
- * Aksi pada setiap skenario: tambah item, ajukan ke Bendahara, dan arsipkan.
- * Ajukan diblokir di UI jika defisit (proteksi tambahan, server tetap memvalidasi).
- */
 export function ScenarioActions({ scenarioId, isDeficit, orgId, eventId }: Props) {
   const router = useRouter();
   const { toast } = useToast();
