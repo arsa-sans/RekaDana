@@ -6,7 +6,6 @@ const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Proteksi CSRF berbasis Origin pada semua endpoint mutasi API
   if (pathname.startsWith("/api/v1")) {
     const method = req.method.toUpperCase();
 
@@ -14,13 +13,11 @@ export function proxy(req: NextRequest) {
       const authHeader = req.headers.get("authorization");
       const isBearerToken = authHeader && authHeader.startsWith("Bearer ");
 
-      // Klien mobile dan API publik menggunakan Bearer token yang kebal CSRF browser
       if (!isBearerToken) {
         const origin = req.headers.get("origin");
         const referer = req.headers.get("referer");
         const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
 
-        // Jika terdapat origin header (standar pada fetch browser), validasi kecocokan host
         if (origin && host) {
           try {
             const originUrl = new URL(origin);
