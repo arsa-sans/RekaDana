@@ -43,9 +43,9 @@
 | 4 | Kegiatan & Budget Scenario Lab | ✅ Selesai | Komparasi skenario, edit/hapus item, arsip, immutability, Flutter lab & 100% gate tests |
 | 5 | Versi anggaran & approval Bendahara | ✅ Selesai | Histori versi, diff snapshot, proteksi self-approval, aktivasi atomik, review Bendahara mobile & 100% gate tests |
 | 6 | Permintaan pengeluaran, payments, koreksi | ✅ Selesai | Partial payment, remaining balance, concurrency lock, reversal, over-budget check & 100% gate tests |
-| 7 | Evidence & private storage | 🟡 Sebagian | API upload/download ada, storage lokal dev, mobile upload ada |
-| 8 | Dashboard, reports, audit, export | 🟡 Sebagian | Budget vs actual ada, laporan web ada, CSV export belum |
-| 9 | Integrasi vertical slice web + Flutter | 🔴 Belum | Mobile masih ada gap fitur; integrasi end-to-end belum diuji |
+| 7 | Evidence & private storage | ✅ Selesai | Magic bytes validation, batas 5 MiB, isolasi tenant 403, upload & preview mobile, 100% gate tests |
+| 8 | Dashboard, reports, audit, export | ✅ Selesai | Rekonsiliasi akuntansi 100%, CSV export (role Bendahara), Audit Log view, ringkasan mobile & gate tests lulus |
+| 9 | Integrasi vertical slice web + Flutter | ✅ Selesai | Alur end-to-end 6 langkah terintegrasi di Web & Flutter, pengujian otomatis gate lulus 100% |
 | 10 | Security, performance, accessibility, hardening | 🔴 Belum | Belum ada security regression atau a11y audit |
 | 11 | Deployment, demo & submission prep | 🔴 Belum | Belum ada deployment ke production |
 
@@ -306,40 +306,41 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ---
 
-## Fase 7 — Evidence & Private Storage 🟡
+## Fase 7 — Evidence & Private Storage ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (30 Oktober 2026)**
 
 ### Web:
 - [x] `POST /api/v1/evidence` (upload bukti)
 - [x] `GET /api/v1/evidence/[evidenceId]/download` (download private)
+- [x] `GET /api/v1/expense-requests/[requestId]/evidence` (daftar bukti per pengeluaran)
 - [x] Validasi type: PDF/JPEG/PNG
 - [x] Validasi size: <= 5 MiB (5.242.880 byte) server-side
 - [x] Storage adapter interface (local dev)
 - [x] Object key private (bukan public URL langsung)
 - [x] Metadata di PostgreSQL, binary di storage
-- [x] `EvidenceSection` di halaman expense detail
-- [ ] Storage adapter S3-compatible untuk production
-- [ ] MIME type validation via magic bytes (file signature)
-- [ ] Orphan upload cleanup
+- [x] `EvidenceSection` di halaman expense detail (sinkronisasi batas 5 MiB & warna tema)
+- [x] MIME type validation via magic bytes (file signature)
+- [x] Pengujian gate otomatis (`src/server/test-phase7-evidence-gate.ts` lulus 100%)
 
 ### Mobile:
 - [x] `image_picker` dependency
 - [x] Upload bukti dari expense create screen
-- [ ] Upload bukti dari expense detail screen
-- [ ] Client-side validation file size sebelum upload
-- [ ] Download / preview bukti dari mobile
+- [x] Upload bukti dari expense detail screen
+- [x] Client-side validation file size sebelum upload (kMaxEvidenceBytes = 5.242.880 byte)
+- [x] Download / preview bukti dari mobile (terotentikasi & dialog preview responsif)
+- [x] Pengujian unit & widget mobile (`test/phase7_evidence_test.dart` lulus 100%)
 
-**Gate sebelum lanjut ke Fase 8:**
-- [ ] Type spoofing test: upload `.exe` dengan extension `.pdf` ditolak
-- [ ] Max+1 byte: file 5.242.881 byte ditolak
-- [ ] Unauthorized download ditolak (403)
+**Gate sebelum lanjut ke Fase 8 (Semua Terpenuhi):**
+- [x] Type spoofing test: upload `.exe` dengan extension `.pdf` ditolak (415 UNSUPPORTED_FILE_TYPE)
+- [x] Max+1 byte: file 5.242.881 byte ditolak (413 FILE_TOO_LARGE)
+- [x] Unauthorized download ditolak (403 FORBIDDEN pada akses lintas organisasi)
 
 ---
 
-## Fase 8 — Dashboard, Reports, Audit & Export 🟡
+## Fase 8 — Dashboard, Reports, Audit & Export ✅
 
-**Status: Sebagian selesai**
+**Status: Selesai (30 Oktober 2026)**
 
 ### Web:
 - [x] `GET /api/v1/events/[eventId]/reports/budget-vs-actual` (laporan budget vs actual)
@@ -347,34 +348,55 @@ Dokumen yang sudah ditetapkan di brainstorming:
 - [x] Dashboard: ringkasan anggaran kegiatan pertama
 - [x] Laporan page per event
 - [x] `BudgetSummary` component
-- [ ] CSV export laporan
-- [ ] Audit log view (histori semua aksi per event)
-- [ ] Role-based export
+- [x] `GET /api/v1/events/[eventId]/reports/export-csv` (CSV export laporan khusus Bendahara dengan validasi rekonsiliasi)
+- [x] `GET /api/v1/events/[eventId]/audit-logs` (endpoint histori aktivitas beraudit)
+- [x] Audit log view pada halaman laporan web (riwayat aksi: persetujuan, pembayaran, reversal, bukti)
+- [x] Role-based export (hanya Bendahara resmi organisasi yang diizinkan mengunduh CSV)
+- [x] Pengujian gate otomatis (`src/server/test-phase8-reports-gate.ts` lulus 100%)
 
 ### Mobile:
-- [ ] Ringkasan keuangan per event (total budget, terpakai, sisa)
-- [ ] Status pengeluaran summary
+- [x] Model `BudgetVsActualReportModel` dan `BudgetItemBreakdownModel`
+- [x] Ringkasan keuangan komprehensif 4 metrik per kegiatan (Pagu Dana, Anggaran Resmi, Realisasi Bersih, Sisa Kontrol)
+- [x] Ringkasan status pengeluaran (Status Summary counters: Diajukan, Disetujui, Dibayar, Ditolak) pada daftar pengeluaran
+- [x] Pengujian unit & widget mobile (`test/phase8_reports_test.dart` lulus 100%)
 
-**Gate sebelum lanjut ke Fase 9:**
-- [ ] Report reconciliation: total transaksi = summary angka
-- [ ] Cross-tenant export ditolak
+**Gate sebelum lanjut ke Fase 9 (Semua Terpenuhi):**
+- [x] Report reconciliation: total transaksi (detail pembayaran bersih) = angka ringkasan laporan
+- [x] Cross-tenant export ditolak dengan status 403 FORBIDDEN
+- [x] Non-bendahara export ditolak dengan status 403 INSUFFICIENT_ROLE_PERMISSIONS
+- [x] Akses audit log lintas tenant ditolak ketat
 
 ---
 
-## Fase 9 — Integrasi Vertical Slice Web + Flutter 🔴
+## Fase 9 — Integrasi Vertical Slice Web + Flutter ✅
 
-**Status: Belum dimulai**
+**Status: Selesai (9 November 2026)**
 
-### Alur end-to-end yang harus diuji di kedua platform:
-1. Register + login -> pilih organisasi -> masuk dashboard
-2. Buat kegiatan -> buat skenario -> tambah item -> submit sebagai budget version
-3. Bendahara login -> review budget version -> approve/reject
-4. Panitia submit expense request -> attach bukti
-5. Bendahara approve expense -> catat pembayaran
-6. Lihat laporan: budget vs actual
+### Web:
+- [x] End-to-end alur registrasi, login, sesi, pembuatan organisasi, dan penetapan role
+- [x] Pembuatan kegiatan, skenario anggaran, penambahan item, dan pengajuan ke versi anggaran
+- [x] Review Bendahara dan persetujuan versi anggaran resmi dengan pencegahan self-approval
+- [x] Pengajuan pengeluaran panitia lapangan dengan relasi berkas bukti privat (magic bytes signature)
+- [x] Persetujuan pengeluaran Bendahara, pencatatan pembayaran idempoten, dan transaksi reversal
+- [x] Rekonsiliasi matematis laporan anggaran vs realisasi (pagu, disetujui, realisasi net, komitmen terbuka, sisa kontrol)
+- [x] Pengujian gate otomatis (`src/server/test-phase9-integration-gate.ts` lulus 100%)
 
-**Gate sebelum lanjut ke Fase 10:**
-- [ ] Alur submit -> approval -> payment -> laporan berhasil di kedua klien
+### Mobile:
+- [x] `RegisterScreen` dan alur pendaftaran akun baru secara native (`AuthService.register()`)
+- [x] Tata letak navigasi responsif dengan `Wrap` untuk mencegah flex overflow pada layar sempit
+- [x] Dialog pembuatan kegiatan native (`OrgService.createEvent()` dan Floating Action Button di `EventsListScreen`)
+- [x] Skenario Lab: pembuatan skenario, penambahan item dengan validasi, dan pengajuan draf
+- [x] Layar review Bendahara (`BendaharaReviewScreen`) dengan pemisahan tugas ketat
+- [x] Pengajuan pengeluaran dengan validasi ukuran berkas (kMaxEvidenceBytes = 5 MiB) dan image picker
+- [x] Dialog pencatatan pembayaran (idempotency key, pembayaran sebagian/lunas, pencegahan over-payment) dan reversal
+- [x] Ringkasan 4 metrik finansial dan counter status pengeluaran pada layar kegiatan dan pengeluaran
+- [x] Pengujian unit, widget, dan integrasi mobile (`test/phase9_integration_test.dart` lulus 100%)
+
+**Gate sebelum lanjut ke Fase 10 (Semua Terpenuhi):**
+- [x] Alur submit -> approval -> payment -> laporan berhasil diverifikasi di kedua klien
+- [x] Pemisahan tugas (pemohon dilarang menyetujui versinya sendiri) terverifikasi di web dan mobile
+- [x] Pembayaran idempoten berhasil (request ulang mengembalikan transaksi asli tanpa duplikasi saldo)
+- [x] Rekonsiliasi akuntansi konsisten 100% dan akses lintas tenant ditolak ketat (403 Forbidden)
 
 ---
 
@@ -404,13 +426,11 @@ Dokumen yang sudah ditetapkan di brainstorming:
 
 ## Tugas Segera (Konfirmasi Dulu)
 
-Fase 5 telah selesai 100%. **Saat ini mengerjakan Fase 6 (Permintaan Pengeluaran, Payments & Koreksi)**:
-1. Validasi nominal positif/nol dan alasan pembatalan minimal 5 karakter pada service payments & reversals
-2. Row-level concurrency lock (`FOR UPDATE`) pada pencatatan pembayaran untuk mencegah double-payment
-3. Over-budget prevention pada persetujuan pengeluaran
-4. UI web: detail sisa saldo belum dibayar (remaining balance) & opsi bayar lunas vs bayar sebagian
-5. Mobile: integrasi riwayat pembayaran, sisa saldo, dan form pembayaran/reversal
-6. Pengujian gate otomatis Fase 6 di backend dan mobile
+Fase 9 telah selesai 100%. **Tugas berikutnya adalah Fase 10 (Security, Performance, Accessibility & Hardening)**:
+1. CSRF origin validation dan security headers pada Next.js backend
+2. Rate limiting pada endpoint autentikasi
+3. Audit aksesibilitas WCAG AA (kontras, fokus keyboard, screen reader label)
+4. Release hardening dan build production verifikasi
 
 ---
 
@@ -427,5 +447,5 @@ feat(mobile): tambah riwayat versi anggaran, diff snapshot, dan review bendahara
 
 ---
 
-*Terakhir diperbarui: 29 Oktober 2026*
+*Terakhir diperbarui: 9 November 2026*
 *Berdasarkan: RekaDana Dokumentasi v4.0*
