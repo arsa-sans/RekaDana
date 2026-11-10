@@ -72,7 +72,7 @@ export default async function DashboardPage({ params }: Props) {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">Organisasi</p>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Organisasi</p>
           <h1 className="text-xl font-bold text-slate-900">{org.name}</h1>
           <p className="text-sm text-slate-500">Peran Anda: {ROLE_LABEL[role] ?? role}</p>
         </div>
@@ -139,7 +139,7 @@ export default async function DashboardPage({ params }: Props) {
                     <p className="truncate font-medium text-slate-900 group-hover:text-indigo-700">
                       {event.name}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500">
                       {event.participantCount} peserta &middot; Dibuat {formatWaktu(event.createdAt)}
                     </p>
                   </div>
