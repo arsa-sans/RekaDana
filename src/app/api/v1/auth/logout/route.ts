@@ -1,7 +1,13 @@
+import { NextRequest } from "next/server";
 import { getSession, deleteSession, clearSessionCookie } from "@/server/auth/session";
-import { apiSuccess } from "@/server/http/response";
+import { apiSuccess, apiError } from "@/server/http/response";
+import { validateOrigin } from "@/server/http/csrf";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (session) {
     await deleteSession(session.sessionToken);
