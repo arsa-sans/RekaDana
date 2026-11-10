@@ -3,11 +3,16 @@ import { getSession } from "@/server/auth/session";
 import { approveBudgetVersion } from "@/server/modules/budgets.service";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { AuthorizationError } from "@/server/authorization/tenant";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ versionId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
