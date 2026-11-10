@@ -7,6 +7,7 @@ import { requireMembership, AuthorizationError } from "@/server/authorization/te
 import { addMemberSchema } from "@/server/validation";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { logAuditEvent } from "@/server/audit/audit.service";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function GET(
   _req: NextRequest,
