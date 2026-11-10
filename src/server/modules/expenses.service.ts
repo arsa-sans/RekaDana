@@ -136,10 +136,14 @@ export async function createExpenseRequest(
   return request;
 }
 
-export async function listExpenseRequests(userId: string, eventId: string) {
+export async function listExpenseRequests(
+  userId: string,
+  eventId: string,
+  options?: { limit?: number; offset?: number }
+) {
   await requireEventAccess(userId, eventId);
 
-  return db
+  const query = db
     .select({
       id: expenseRequests.id,
       eventId: expenseRequests.eventId,
@@ -166,6 +170,15 @@ export async function listExpenseRequests(userId: string, eventId: string) {
     .leftJoin(reviewedByUser, eq(expenseRequests.reviewedBy, reviewedByUser.id))
     .where(eq(expenseRequests.eventId, eventId))
     .orderBy(desc(expenseRequests.createdAt));
+
+  if (options?.limit) {
+    query.limit(options.limit);
+  }
+  if (options?.offset) {
+    query.offset(options.offset);
+  }
+
+  return query;
 }
 
 export async function getExpenseRequestDetail(
