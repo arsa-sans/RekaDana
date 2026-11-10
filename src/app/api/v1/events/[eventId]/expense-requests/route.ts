@@ -7,9 +7,10 @@ import {
 import { createExpenseRequestSchema } from "@/server/validation";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { AuthorizationError } from "@/server/authorization/tenant";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
   const session = await getSession();
@@ -22,9 +23,24 @@ export async function GET(
   }
 
   const { eventId } = await params;
+  const url = req.nextUrl;
+  const rawLimit = url.searchParams.get("limit");
+  const rawPage = url.searchParams.get("page");
+
+  let limit: number | undefined;
+  let offset: number | undefined;
+
+  if (rawLimit) {
+    const parsedLimit = parseInt(rawLimit, 10);
+    if (!isNaN(parsedLimit) && parsedLimit > 0) {
+      limit = Math.min(parsedLimit, 100);
+      const page = rawPage ? Math.max(parseInt(rawPage, 10) || 1, 1) : 1;
+      offset = (page - 1) * limit;
+    }
+  }
 
   try {
-    const list = await listExpenseRequests(session.user.id, eventId);
+    const list = await listExpenseRequests(session.user.id, eventId, { limit, offset });
     return apiSuccess({ data: list });
   } catch (err: unknown) {
     if (err instanceof AuthorizationError) {
@@ -46,6 +62,10 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
