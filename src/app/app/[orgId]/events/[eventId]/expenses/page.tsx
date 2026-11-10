@@ -32,7 +32,7 @@ export default async function ExpensesPage({ params }: Props) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs text-slate-400 uppercase tracking-wide font-medium">{event.name}</p>
+          <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{event.name}</p>
           <h1 className="text-xl font-bold text-slate-900">Permintaan Pengeluaran</h1>
           <p className="text-sm text-slate-500">Semua permintaan pengeluaran untuk kegiatan ini.</p>
         </div>
@@ -74,7 +74,7 @@ export default async function ExpensesPage({ params }: Props) {
                       {req.title}
                     </Link>
                     {req.description && (
-                      <p className="mt-0.5 text-xs text-slate-400 line-clamp-1">{req.description}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 line-clamp-1">{req.description}</p>
                     )}
                   </td>
                   <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
