@@ -4,11 +4,16 @@ import { updateScenarioItem, deleteScenarioItem } from "@/server/modules/scenari
 import { updateScenarioItemSchema } from "@/server/validation";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { AuthorizationError } from "@/server/authorization/tenant";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ scenarioId: string; itemId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
@@ -54,9 +59,13 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ scenarioId: string; itemId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
