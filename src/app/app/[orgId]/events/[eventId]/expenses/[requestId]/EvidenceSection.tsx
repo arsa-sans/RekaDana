@@ -85,11 +85,11 @@ export function EvidenceSection({ organizationId, expenseRequestId, items }: Pro
           <Paperclip size={18} className="text-slate-500" />
           <h2 className="text-sm font-semibold text-slate-900">Bukti Transaksi / Nota</h2>
         </div>
-        <span className="text-xs text-slate-400">{items.length} file</span>
+        <span className="text-xs text-slate-500">{items.length} file</span>
       </div>
 
       {items.length === 0 ? (
-        <p className="text-xs text-slate-400 italic">Belum ada nota atau bukti yang dilampirkan.</p>
+        <p className="text-xs text-slate-500 italic">Belum ada nota atau bukti yang dilampirkan.</p>
       ) : (
         <div className="divide-y divide-slate-100 rounded-lg border border-slate-100">
           {items.map((item) => (
@@ -102,7 +102,7 @@ export function EvidenceSection({ organizationId, expenseRequestId, items }: Pro
                 )}
                 <div className="min-w-0">
                   <p className="font-medium text-slate-800 truncate">{item.originalFileName}</p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     {formatBytes(item.fileSizeBytes)} • {formatWaktu(item.createdAt)}
                   </p>
                 </div>
