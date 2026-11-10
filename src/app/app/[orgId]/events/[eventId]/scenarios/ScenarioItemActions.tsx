@@ -141,7 +141,7 @@ export function ScenarioItemActions({ scenarioId, item }: Props) {
         }}
         aria-label={`Ubah item ${item.name}`}
         title="Ubah item"
-        className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
+        className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
       >
         <Pencil size={13} />
       </button>
@@ -152,7 +152,7 @@ export function ScenarioItemActions({ scenarioId, item }: Props) {
         onClick={() => setDeleteOpen(true)}
         aria-label={`Hapus item ${item.name}`}
         title="Hapus item"
-        className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 transition-colors"
+        className="rounded p-1 text-slate-500 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 transition-colors"
       >
         <Trash2 size={13} />
       </button>
