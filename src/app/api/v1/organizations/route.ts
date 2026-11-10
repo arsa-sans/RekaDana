@@ -6,6 +6,7 @@ import { getSession } from "@/server/auth/session";
 import { createOrganizationSchema } from "@/server/validation";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { logAuditEvent } from "@/server/audit/audit.service";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function GET() {
   const session = await getSession();
@@ -33,6 +34,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
