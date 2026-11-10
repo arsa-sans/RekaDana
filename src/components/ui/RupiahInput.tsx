@@ -54,7 +54,7 @@ export function RupiahInput({
           disabled && "opacity-50 cursor-not-allowed bg-slate-50"
         )}
       >
-        <span className="mr-1.5 text-slate-400 text-sm select-none">Rp</span>
+        <span className="mr-1.5 text-slate-500 text-sm select-none">Rp</span>
         <input
           id={id}
           type="text"
