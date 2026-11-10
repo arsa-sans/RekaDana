@@ -35,7 +35,7 @@ function MetricCard({ label, value, isNegative, description }: MetricCardProps) 
         {value}
       </span>
       {description && (
-        <span className="text-xs text-slate-400">{description}</span>
+        <span className="text-xs text-slate-500">{description}</span>
       )}
     </div>
   );
