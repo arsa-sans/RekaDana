@@ -15,6 +15,7 @@
     "test:phase7": "bun run src/server/test-phase7-evidence-gate.ts",
     "test:phase8": "bun run src/server/test-phase8-reports-gate.ts",
     "test:phase9": "bun run src/server/test-phase9-integration-gate.ts",
+    "test:phase10": "bun run src/server/test-phase10-security-gate.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
