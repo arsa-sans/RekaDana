@@ -51,7 +51,7 @@ export function ConfirmModal({
               {title}
             </DialogPrimitive.Title>
             <DialogPrimitive.Close
-              className="rounded p-0.5 text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A]"
+              className="rounded p-0.5 text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A]"
               aria-label="Tutup"
             >
               <X size={16} />
