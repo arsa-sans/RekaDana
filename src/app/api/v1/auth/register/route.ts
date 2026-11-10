@@ -6,9 +6,24 @@ import { registerSchema } from "@/server/validation";
 import { hashPassword } from "@/server/auth/passwords";
 import { createSession, setSessionCookie } from "@/server/auth/session";
 import { apiSuccess, apiError } from "@/server/http/response";
+import { validateOrigin } from "@/server/http/csrf";
+import { checkRateLimit, getClientIp } from "@/server/http/ratelimit";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!validateOrigin(req)) {
+      return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+    }
+
+    const ip = getClientIp(req.headers);
+    if (!checkRateLimit(ip, "auth")) {
+      return apiError({
+        code: "RATE_LIMIT_EXCEEDED",
+        message: "Terlalu banyak percobaan pendaftaran dari alamat ini. Coba lagi dalam 15 menit.",
+        status: 429,
+      });
+    }
+
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
 
