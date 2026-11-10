@@ -81,7 +81,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             </div>
             <ToastPrimitive.Close
               onClick={() => dismiss(t.id)}
-              className="shrink-0 rounded p-0.5 text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="shrink-0 rounded p-0.5 text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
               aria-label="Tutup notifikasi"
             >
               <X size={14} />
