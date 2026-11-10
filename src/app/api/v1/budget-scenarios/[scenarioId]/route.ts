@@ -3,11 +3,16 @@ import { getSession } from "@/server/auth/session";
 import { archiveScenario } from "@/server/modules/scenarios.service";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { AuthorizationError } from "@/server/authorization/tenant";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ scenarioId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
