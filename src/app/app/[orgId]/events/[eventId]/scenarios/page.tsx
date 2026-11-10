@@ -153,7 +153,7 @@ export default async function ScenarioLabPage({ params }: Props) {
                         <AlertTriangle size={13} />
                         {s.unfundedItemsCount} item
                       </span>
-                    ) : <span className="text-slate-400 text-xs">Aman</span>}
+                    ) : <span className="text-slate-500 text-xs">Aman</span>}
                   </td>
                 ))}
               </tr>
@@ -218,7 +218,7 @@ export default async function ScenarioLabPage({ params }: Props) {
                       <td className="px-4 py-2.5 text-center text-xs">
                         {item.isIncluded
                           ? <span className="text-green-600 font-medium">Ya</span>
-                          : <span className="text-slate-400">Tidak</span>}
+                          : <span className="text-slate-500">Tidak</span>}
                       </td>
                       {canEdit && (
                         <td className="px-3 py-2.5 text-center">
