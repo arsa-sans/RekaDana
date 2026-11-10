@@ -4,11 +4,16 @@ import { rejectExpenseRequest } from "@/server/modules/expenses.service";
 import { rejectReasonSchema } from "@/server/validation";
 import { apiSuccess, apiError } from "@/server/http/response";
 import { AuthorizationError } from "@/server/authorization/tenant";
+import { validateOrigin } from "@/server/http/csrf";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ requestId: string }> }
 ) {
+  if (!validateOrigin(req)) {
+    return apiError({ code: "FORBIDDEN", message: "Origin tidak diizinkan.", status: 403 });
+  }
+
   const session = await getSession();
   if (!session) {
     return apiError({
