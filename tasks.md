@@ -47,7 +47,7 @@
 | 8 | Dashboard, reports, audit, export | ✅ Selesai | Rekonsiliasi akuntansi 100%, CSV export (role Bendahara), Audit Log view, ringkasan mobile & gate tests lulus |
 | 9 | Integrasi vertical slice web + Flutter | ✅ Selesai | Alur end-to-end 6 langkah terintegrasi di Web & Flutter, pengujian otomatis gate lulus 100% |
 | 10 | Security, performance, accessibility, hardening | ✅ Selesai | CSRF di semua mutasi, rate limiting auth, audit WCAG AA kontras 100%, 19/19 security gate tests, build web & mobile clean |
-| 11 | Deployment, demo & submission prep | 🔴 Belum | Belum ada deployment ke production |
+| 11 | Deployment, demo & submission prep | ✅ Selesai | Build web Next.js 16 clean, build APK release Android 54 MB, adapter S3 Neon Object Storage, data seed realistis R-38 |
 
 ---
 
@@ -86,20 +86,20 @@
 
 ---
 
-## Fase 11 — Deployment, Demo & Submission Prep 🔴
+## Fase 11 — Deployment, Demo & Submission Prep ✅
 
-**Status: Belum dimulai**
+**Status: Selesai (11 November 2026)**
 
 ### Deployment & Demo:
-- [ ] Deploy Next.js ke production (Neon PostgreSQL)
-- [ ] Build APK Android untuk demo
-- [ ] Verifikasi ketiadaan data dummy / fake (R-38)
-
----
-
-## Tugas Segera (Konfirmasi Dulu)
-
-Fase 10 telah selesai 100%. **Tugas berikutnya adalah Fase 11 (Deployment, Demo & Submission Prep)**:
-1. Konfigurasi deployment web ke hosting publik (Vercel / Cloud Platform) dengan koneksi Neon PostgreSQL
-2. Kompilasi APK Android release untuk demonstrasi mobile
-3. Penyusunan data demo realistis dan verifikasi akhir kepatuhan dokumen kompetisi
+- [x] Deploy Next.js ke production (Neon PostgreSQL):
+  - Adapter bukti privat S3 Neon Object Storage (`evidence.service.ts`)
+  - Konfigurasi `vercel.json` siap deployment
+  - Build web Next.js 16 clean (15/15 routes static & dynamic)
+  - Typecheck dan lint lulus 100%
+- [x] Build APK Android untuk demo:
+  - Kompilasi `app-release.apk` (54.0 MB) dan `app-debug.apk` di `rekadana_mobile/build/app/outputs/flutter-apk/`
+  - Pengaturan URL server dinamis di dialog Login
+  - `flutter analyze` (0 issues) dan `flutter test` (48/48 tests lulus)
+- [x] Verifikasi ketiadaan data dummy / fake (R-38):
+  - Script seed data realistis `seed-demo.ts` (`bun run db:seed-demo`) dengan kegiatan sekolah nyata
+  - Akun demo realistis: Ketua, Bendahara, dan Panitia OSIS SMK Nusantara 1
