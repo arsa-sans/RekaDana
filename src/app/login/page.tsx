@@ -6,10 +6,6 @@ import Link from "next/link";
 import { RupiahInput } from "@/components/ui/RupiahInput";
 import { useToast } from "@/components/ui/Toast";
 
-/**
- * Halaman login: form minimal, tidak ada elemen dekoratif yang tidak perlu.
- * Tombol CTA spesifik ke aksi ("Masuk ke akun") bukan generic "Login" (R-15).
- */
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
