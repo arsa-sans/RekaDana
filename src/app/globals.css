@@ -1,20 +1,7 @@
-/**
- * Token desain untuk RekaDana.
- *
- * Palet dipilih berdasarkan DESIGN.md: terang, elegan, profesional.
- * Warna primer adalah biru tinta (indigo-700) yang tegas tapi tidak agresif.
- * Warna status finansial: hijau untuk surplus, merah untuk defisit/ditolak,
- * kuning untuk butuh tindakan, abu-abu netral untuk draft.
- *
- * Tidak ada gradient dekoratif, glow, atau glassmorphism di sini.
- * Semua keputusan warna di globals.css mengikuti token ini.
- */
 
 @import "tailwindcss";
 
 @theme inline {
-  /* Tipografi: Plus Jakarta Sans untuk body (terbaca pada angka panjang),
-     mono untuk nominal Rupiah agar kolom angka rata kanan. */
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
 
