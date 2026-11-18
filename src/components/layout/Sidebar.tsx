@@ -32,11 +32,12 @@ interface NavItem {
 }
 
 interface SidebarProps {
+  orgId: string;
   orgName: string;
   orgSlug: string;
   userName: string;
   role: string;
-  items: NavItem[];
+  items?: NavItem[];
   onLogout: () => void;
 }
 
@@ -46,7 +47,7 @@ const ROLE_LABEL: Record<string, string> = {
   panitia_anggota: "Panitia Anggota",
 };
 
-export function Sidebar({ orgName, orgSlug, userName, role, items, onLogout }: SidebarProps) {
+export function Sidebar({ orgId, orgName, orgSlug, userName, role, items: propItems, onLogout }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -65,6 +66,13 @@ export function Sidebar({ orgName, orgSlug, userName, role, items, onLogout }: S
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, [mobileOpen]);
+
+  // Ekstrak eventId dari pathname jika sedang berada dalam konteks event
+  // contoh: /app/[orgId]/events/[eventId]/...
+  const eventMatch = pathname.match(new RegExp(`^/app/[^/]+/events/([^/]+)`));
+  const eventId = eventMatch && eventMatch[1] !== "new" ? eventMatch[1] : undefined;
+
+  const items = propItems ?? buildNavItems(orgId, eventId, role);
 
   const sidebarContent = (
     <div className="flex h-full flex-col overflow-hidden">

@@ -90,19 +90,19 @@ export async function POST(req: NextRequest) {
         })
         .returning();
 
-      await logAuditEvent({
-        actorId: session.user.id,
-        organizationId: newOrg.id,
-        action: "organization.created",
-        objectType: "organization",
-        objectId: newOrg.id,
-        afterState: newOrg as unknown as Record<string, unknown>,
-      });
-
       return {
         organization: newOrg,
         membership,
       };
+    });
+
+    await logAuditEvent({
+      actorId: session.user.id,
+      organizationId: result.organization.id,
+      action: "organization.created",
+      objectType: "organization",
+      objectId: result.organization.id,
+      afterState: result.organization as unknown as Record<string, unknown>,
     });
 
     return apiSuccess({

@@ -5,7 +5,7 @@ import { requireMembership } from "@/server/authorization/tenant";
 import { db } from "@/server/db";
 import { organizations } from "@/server/db/schema";
 import { eq, and } from "drizzle-orm";
-import { Sidebar, buildNavItems } from "@/components/layout/Sidebar";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { Users, ShieldAlert } from "lucide-react";
 
 interface Props {
@@ -87,8 +87,6 @@ export default async function OrgLayout({ children, params }: Props) {
 
   if (!org) redirect("/app?select=true");
 
-  const navItems = buildNavItems(orgId, undefined, membership.role);
-
   async function handleLogout() {
     "use server";
     const { clearSessionCookie, deleteSession, getSession } = await import("@/server/auth/session");
@@ -103,11 +101,11 @@ export default async function OrgLayout({ children, params }: Props) {
   return (
     <div className="flex min-h-dvh">
       <Sidebar
+        orgId={orgId}
         orgName={org.name}
         orgSlug={org.slug}
         userName={session.user.name}
         role={membership.role}
-        items={navItems}
         onLogout={handleLogout}
       />
       {/* Konten utama: padding kiri = lebar sidebar di layar besar */}
