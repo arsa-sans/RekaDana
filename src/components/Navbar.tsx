@@ -19,12 +19,18 @@ export default function Navbar() {
       className="sticky top-0 z-50"
     >
       <div className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-        {/* Logo wordmark */}
+        {/* Logo wordmark & badge */}
         <a
           href="#"
-          className="text-white font-bold text-lg tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#153D35] rounded"
+          className="flex items-center gap-2.5 text-white font-bold text-lg tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35B88A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#153D35] rounded"
         >
-          RekaDana
+          <div
+            className="w-7 h-7 rounded-[6px] bg-[#35B88A] flex items-center justify-center font-bold text-[#153D35] text-sm select-none"
+            aria-hidden="true"
+          >
+            R
+          </div>
+          <span>RekaDana</span>
         </a>
 
         {/* Desktop nav */}

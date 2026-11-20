@@ -10,11 +10,13 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "RekaDana",
-  description: "Aplikasi pengelolaan anggaran kegiatan untuk panitia OSIS, ekstrakurikuler, dan kegiatan sekolah.",
+  title: "RekaDana — Kelola Anggaran Kegiatan Sekolah & OSIS",
+  description:
+    "Aplikasi Android untuk panitia OSIS, ekstrakurikuler, dan kegiatan sekolah. Rencanakan anggaran, ajukan pengeluaran bertingkat, dan buat laporan keuangan otomatis.",
   openGraph: {
-    title: "RekaDana",
-    description: "Kelola anggaran kegiatan, dari rencana sampai laporan.",
+    title: "RekaDana — Kelola Anggaran Kegiatan Sekolah & OSIS",
+    description:
+      "Aplikasi Android untuk panitia OSIS, ekstrakurikuler, dan kegiatan sekolah. Rencanakan anggaran, ajukan pengeluaran bertingkat, dan buat laporan keuangan otomatis.",
     type: "website",
   },
 };

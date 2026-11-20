@@ -99,7 +99,7 @@ export default function Hero3DPhone() {
 
     ctx.fillStyle = "rgba(255,255,255,0.5)";
     ctx.font = "13px sans-serif";
-    ctx.fillText("Malam Seni OSIS 2026", 36, 122);
+    ctx.fillText("OSIS SMK Nusantara 1", 36, 122);
 
     // Summary card
     ctx.fillStyle = "rgba(53,184,138,0.14)";
@@ -112,7 +112,7 @@ export default function Hero3DPhone() {
 
     ctx.fillStyle = "rgba(255,255,255,0.65)";
     ctx.font = "14px sans-serif";
-    ctx.fillText("Total Anggaran", 55, 185);
+    ctx.fillText("Total Anggaran Kegiatan", 55, 185);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 30px sans-serif";
@@ -120,7 +120,7 @@ export default function Hero3DPhone() {
 
     ctx.fillStyle = "#35b88a";
     ctx.font = "bold 13px sans-serif";
-    ctx.fillText("Rp 11.200.000 terserap", 55, 258);
+    ctx.fillText("Rp 10.600.000 teralokasi", 55, 258);
 
     // Progress bar anggaran
     ctx.fillStyle = "rgba(255,255,255,0.1)";
@@ -129,7 +129,7 @@ export default function Hero3DPhone() {
     ctx.fill();
     ctx.fillStyle = "#35b88a";
     ctx.beginPath();
-    ctx.roundRect(55, 275, 293, 8, 4);
+    ctx.roundRect(55, 275, 275, 8, 4);
     ctx.fill();
 
     // Expense rows
@@ -140,12 +140,12 @@ export default function Hero3DPhone() {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 16px sans-serif";
-    ctx.fillText("Pengeluaran Terkini", 52, 380);
+    ctx.fillText("Pos Anggaran Terencana", 52, 380);
 
     const rows = [
-      { label: "Dekorasi Panggung", amt: "Rp 2.400.000", pct: 0.72, color: "#35b88a" },
-      { label: "Kostum Penampil", amt: "Rp 1.800.000", pct: 0.55, color: "#2ea87d" },
-      { label: "Sound System", amt: "Rp 3.000.000", pct: 0.90, color: "#1a7a5e" },
+      { label: "Sewa Panggung & Tenda", amt: "Rp 4.500.000", pct: 0.75, color: "#35b88a" },
+      { label: "Kostum Penampil", amt: "Rp 3.600.000", pct: 0.60, color: "#2ea87d" },
+      { label: "Konsumsi Panitia & Tamu", amt: "Rp 2.500.000", pct: 0.42, color: "#1a7a5e" },
     ];
 
     rows.forEach((row, i) => {

@@ -4,22 +4,25 @@ import { StaggerGroup, StaggerItem } from "@/components/AnimateIn";
 
 const DEMO_ACCOUNTS = [
   {
-    role: "Ketua Panitia",
-    email: "ketua@demo.rekadana.id",
-    password: "demo1234",
-    desc: "Dapat membuat kegiatan, mengelola anggota panitia, dan melihat semua laporan.",
+    role: "Ketua Kegiatan",
+    name: "Budi Santoso",
+    email: "budi.santoso@demo.rekadana",
+    password: "DemoRekaDana2026!",
+    desc: "Membuat kegiatan, menyusun skenario anggaran, mengelola struktur panitia, dan memantau realisasi.",
   },
   {
     role: "Bendahara",
-    email: "bendahara@demo.rekadana.id",
-    password: "demo1234",
-    desc: "Meninjau dan menyetujui pengajuan pengeluaran, mengelola status pembayaran.",
+    name: "Siti Rahayu",
+    email: "siti.rahayu@demo.rekadana",
+    password: "DemoRekaDana2026!",
+    desc: "Meninjau dan menyetujui pengajuan pengeluaran panitia, mencatat bukti transfer, dan mengelola kas.",
   },
   {
     role: "Anggota Panitia",
-    email: "anggota@demo.rekadana.id",
-    password: "demo1234",
-    desc: "Mengajukan pengeluaran, melampirkan bukti transaksi, dan memantau status pengajuan.",
+    name: "Andi Pratama",
+    email: "andi.pratama@demo.rekadana",
+    password: "DemoRekaDana2026!",
+    desc: "Mengajukan pengeluaran kegiatan dengan lampiran bukti nota, serta memantau status pengajuan.",
   },
 ];
 
@@ -53,9 +56,14 @@ export default function DemoAccounts() {
                   boxShadow: "0 1px 3px rgba(21,61,53,0.08), 0 1px 2px rgba(21,61,53,0.04)",
                 }}
               >
-                <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-[6px] mb-4 bg-[#EAF5F0] text-[#153D35]">
-                  {account.role}
-                </span>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded-[6px] bg-[#EAF5F0] text-[#153D35]">
+                    {account.role}
+                  </span>
+                  <span className="text-xs font-medium text-[#64748B]">OSIS SMK</span>
+                </div>
+
+                <h3 className="text-base font-bold text-[#153D35] mb-2">{account.name}</h3>
 
                 <p className="text-sm mb-5 leading-relaxed text-[#475569]">
                   {account.desc}
