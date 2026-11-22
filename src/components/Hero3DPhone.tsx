@@ -220,38 +220,213 @@ export default function Hero3DPhone() {
     const ring1 = makeRing(2.1, 3.4, 0.22, -0.5);
     const ring2 = makeRing(3.6, 4.6, 0.10, -0.9);
 
-    // ─── Floating badge: status chip ───
+    // ─── Floating badge: status widget dengan Canvas texture resolusi tinggi ───
+    // Alasan: menampilkan simulasi notifikasi persetujuan transaksi kas,
+    // langsung mengisi ruang di samping HP dengan konten relevan (R-22).
+    const badgeCanvas = document.createElement("canvas");
+    badgeCanvas.width = 512;
+    badgeCanvas.height = 256;
+    const bCtx = badgeCanvas.getContext("2d")!;
+
+    // Background card: emerald gelap berkelas
+    bCtx.fillStyle = "#123830";
+    bCtx.beginPath();
+    bCtx.roundRect(4, 4, 504, 248, 28);
+    bCtx.fill();
+
+    // Subtle inner gradient
+    const cardGrad = bCtx.createLinearGradient(0, 0, 0, 256);
+    cardGrad.addColorStop(0, "rgba(53,184,138,0.22)");
+    cardGrad.addColorStop(0.5, "rgba(21,61,53,0.1)");
+    cardGrad.addColorStop(1, "rgba(0,0,0,0.3)");
+    bCtx.fillStyle = cardGrad;
+    bCtx.beginPath();
+    bCtx.roundRect(4, 4, 504, 248, 28);
+    bCtx.fill();
+
+    // Border highlight Growth Green
+    bCtx.strokeStyle = "rgba(53,184,138,0.75)";
+    bCtx.lineWidth = 3;
+    bCtx.beginPath();
+    bCtx.roundRect(4, 4, 504, 248, 28);
+    bCtx.stroke();
+
+    // Top pill: Status disetujui
+    bCtx.fillStyle = "rgba(53,184,138,0.22)";
+    bCtx.beginPath();
+    bCtx.roundRect(32, 28, 240, 38, 19);
+    bCtx.fill();
+    bCtx.strokeStyle = "rgba(53,184,138,0.5)";
+    bCtx.lineWidth = 1.5;
+    bCtx.beginPath();
+    bCtx.roundRect(32, 28, 240, 38, 19);
+    bCtx.stroke();
+
+    // Live dot
+    bCtx.fillStyle = "#35b88a";
+    bCtx.beginPath();
+    bCtx.arc(52, 47, 6, 0, Math.PI * 2);
+    bCtx.fill();
+
+    bCtx.fillStyle = "#d1fae5";
+    bCtx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
+    bCtx.fillText("Pengeluaran Disetujui", 68, 53);
+
+    // Waktu
+    bCtx.fillStyle = "rgba(255,255,255,0.5)";
+    bCtx.font = "16px 'Plus Jakarta Sans', sans-serif";
+    bCtx.textAlign = "right";
+    bCtx.fillText("Baru saja", 476, 53);
+    bCtx.textAlign = "left";
+
+    // Divider tipis
+    bCtx.fillStyle = "rgba(255,255,255,0.12)";
+    bCtx.fillRect(32, 84, 448, 1.5);
+
+    // Kategori & Nama Pengeluaran
+    bCtx.fillStyle = "rgba(255,255,255,0.7)";
+    bCtx.font = "18px 'Plus Jakarta Sans', sans-serif";
+    bCtx.fillText("Sewa Panggung & Tenda", 32, 118);
+
+    // Nilai Transaksi
+    bCtx.fillStyle = "#ffffff";
+    bCtx.font = "bold 44px 'Plus Jakarta Sans', sans-serif";
+    bCtx.fillText("Rp 4.500.000", 32, 172);
+
+    // Bottom info tag
+    bCtx.fillStyle = "#35b88a";
+    bCtx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
+    bCtx.fillText("✓ Terverifikasi Bendahara", 32, 218);
+
+    bCtx.fillStyle = "rgba(255,255,255,0.5)";
+    bCtx.font = "16px 'Plus Jakarta Sans', sans-serif";
+    bCtx.textAlign = "right";
+    bCtx.fillText("Kas Kegiatan OSIS", 476, 218);
+    bCtx.textAlign = "left";
+
+    const badgeTexture = new THREE.CanvasTexture(badgeCanvas);
     const badgeMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5, 0.75, 0.07),
-      new THREE.MeshPhongMaterial({ color: 0x1a4d43, shininess: 110, specular: 0xd1e8df })
+      new THREE.PlaneGeometry(1.9, 0.95),
+      new THREE.MeshBasicMaterial({ map: badgeTexture, transparent: true, side: THREE.DoubleSide })
     );
-    badgeMesh.position.set(2.1, 1.7, 0.75);
-    badgeMesh.rotation.y = -0.28;
+    badgeMesh.position.set(2.0, 1.35, 0.65);
+    badgeMesh.rotation.y = -0.18;
     phoneGroup.add(badgeMesh);
 
-    // Floating coin — alasan: menambah kedalaman 3D scene
-    const coinMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.32, 0.07, 32),
-      new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.85, roughness: 0.15 })
-    );
-    coinMesh.position.set(-2.0, -1.5, 0.7);
-    coinMesh.rotation.x = 1.1;
-    coinMesh.rotation.z = 0.4;
-    phoneGroup.add(coinMesh);
+    // ─── Floating coin group: Realistic Shiny Gold Coins with Rp ───
+    // Alasan: representasi fisik dana/anggaran keuangan kegiatan sekolah (R-22)
+    const coinGroup = new THREE.Group();
+    coinGroup.position.set(-2.05, -1.35, 0.85);
+    coinGroup.rotation.x = 0.85;
+    coinGroup.rotation.z = 0.35;
+    phoneGroup.add(coinGroup);
 
-    // Initial pose
-    phoneGroup.rotation.x = 0.10;
-    phoneGroup.rotation.y = -0.35;
-    phoneGroup.rotation.z = 0.05;
+    // Koin material: emas mengkilap dengan emissive amber agar tidak hitam
+    const coinMat = new THREE.MeshPhongMaterial({
+      color: 0xf59e0b, // Amber emas kaya
+      emissive: 0x8a4500, // Glow hangat agar selalu bercahaya
+      emissiveIntensity: 0.45,
+      shininess: 240,
+      specular: 0xfff3c4,
+    });
+
+    // Koin utama (silinder)
+    const mainCoin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.42, 0.42, 0.08, 48),
+      coinMat
+    );
+    coinGroup.add(mainCoin);
+
+    // Bevel rim luar timbul
+    const rimTorus = new THREE.Mesh(
+      new THREE.TorusGeometry(0.40, 0.025, 16, 48),
+      coinMat
+    );
+    rimTorus.rotation.x = Math.PI / 2;
+    coinGroup.add(rimTorus);
+
+    // Face koin (Rp emblem)
+    const faceCanvas = document.createElement("canvas");
+    faceCanvas.width = 256;
+    faceCanvas.height = 256;
+    const fCtx = faceCanvas.getContext("2d")!;
+
+    // Gradasi emas berkilau
+    const fGrad = fCtx.createRadialGradient(128, 110, 20, 128, 128, 128);
+    fGrad.addColorStop(0, "#ffe57f");
+    fGrad.addColorStop(0.35, "#f59e0b");
+    fGrad.addColorStop(0.8, "#d97706");
+    fGrad.addColorStop(1, "#92400e");
+    fCtx.fillStyle = fGrad;
+    fCtx.beginPath();
+    fCtx.arc(128, 128, 124, 0, Math.PI * 2);
+    fCtx.fill();
+
+    // Border cincin dalam timbul
+    fCtx.strokeStyle = "rgba(255, 240, 170, 0.85)";
+    fCtx.lineWidth = 6;
+    fCtx.beginPath();
+    fCtx.arc(128, 128, 102, 0, Math.PI * 2);
+    fCtx.stroke();
+
+    // Teks Rp emas dengan shadow timbul
+    fCtx.shadowColor = "rgba(100, 45, 0, 0.6)";
+    fCtx.shadowBlur = 6;
+    fCtx.shadowOffsetX = 2;
+    fCtx.shadowOffsetY = 3;
+    fCtx.fillStyle = "#ffffff";
+    fCtx.font = "bold 82px 'Plus Jakarta Sans', sans-serif";
+    fCtx.textAlign = "center";
+    fCtx.textBaseline = "middle";
+    fCtx.fillText("Rp", 128, 126);
+
+    const faceTexture = new THREE.CanvasTexture(faceCanvas);
+
+    // Face atas (+Y)
+    const faceTop = new THREE.Mesh(
+      new THREE.CircleGeometry(0.39, 48),
+      new THREE.MeshBasicMaterial({ map: faceTexture })
+    );
+    faceTop.rotation.x = -Math.PI / 2;
+    faceTop.position.y = 0.042;
+    coinGroup.add(faceTop);
+
+    // Face bawah (-Y)
+    const faceBottom = new THREE.Mesh(
+      new THREE.CircleGeometry(0.39, 48),
+      new THREE.MeshBasicMaterial({ map: faceTexture })
+    );
+    faceBottom.rotation.x = Math.PI / 2;
+    faceBottom.position.y = -0.042;
+    coinGroup.add(faceBottom);
+
+    // Koin pendukung kedua di belakang (kesan tumpukan koin)
+    const coin2 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.34, 0.34, 0.07, 36),
+      coinMat
+    );
+    coin2.position.set(-0.25, -0.14, -0.18);
+    coin2.rotation.z = 0.22;
+    coinGroup.add(coin2);
+
+    // Cahaya hangat point light khusus koin
+    const coinLight = new THREE.PointLight(0xffbe3b, 5, 8);
+    coinLight.position.set(-2.0, -0.9, 2.2);
+    scene.add(coinLight);
+
+    // Initial pose — lurus ke depan (y=0), sedikit miring X ke bawah (0.04)
+    phoneGroup.rotation.x = 0.04;
+    phoneGroup.rotation.y = 0;
+    phoneGroup.rotation.z = 0;
 
     // ─── Mouse parallax ───
+    // Ambil posisi mouse relatif terhadap viewport penuh
     let mouseX = 0;
     let mouseY = 0;
 
     const onMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -((e.clientY / window.innerHeight) * 2 - 1);
     };
     window.addEventListener("mousemove", onMouseMove);
 
@@ -264,20 +439,27 @@ export default function Hero3DPhone() {
       animId = requestAnimationFrame(animate);
       const t = (performance.now() - startTime) / 1000;
 
-      // Gentle levitation — alasan: reinforces 'floating' mobile product feel
-      phoneGroup.position.y = Math.sin(t * 1.4) * 0.17;
+      // Mouse parallax yang responsif dan terkontrol:
+      // HP lurus ke depan saat kursor di tengah, dan mengikuti kursor secara halus saat bergerak
+      const targetRotY = mouseX * 0.22; // ~12.5° maks
+      const targetRotX = 0.04 - mouseY * 0.16; // ~9° maks
+      phoneGroup.rotation.y += (targetRotY - phoneGroup.rotation.y) * 0.045;
+      phoneGroup.rotation.x += (targetRotX - phoneGroup.rotation.x) * 0.045;
 
-      // Smooth mouse parallax
-      phoneGroup.rotation.y += ((-0.35 + mouseX * 0.22) - phoneGroup.rotation.y) * 0.04;
-      phoneGroup.rotation.x += ((0.10 - mouseY * 0.18) - phoneGroup.rotation.x) * 0.04;
+      // Sedikit translasi posisi mengikuti kursor untuk kedalaman 3D nyata
+      const targetPosX = mouseX * 0.26;
+      const targetPosY = Math.sin(t * 1.4) * 0.12 - mouseY * 0.18;
+      phoneGroup.position.x += (targetPosX - phoneGroup.position.x) * 0.045;
+      phoneGroup.position.y += (targetPosY - phoneGroup.position.y) * 0.045;
 
-      // Slow ring rotation — alasan: gives rings life without looping aggressively
+      // Slow ring rotation
       ring1.rotation.z = t * 0.08;
       ring2.rotation.z = -t * 0.05;
 
       // Badge & coin secondary motion
-      badgeMesh.position.y = 1.7 + Math.sin(t * 2.1) * 0.07;
-      coinMesh.rotation.y += 0.018;
+      badgeMesh.position.y = 1.35 + Math.sin(t * 2.1) * 0.06;
+      coinGroup.rotation.y += 0.02;
+      coinGroup.position.y = -1.35 + Math.sin(t * 1.8) * 0.08;
 
       // Green glow pulse — subtle
       pointGreen.intensity = 3.5 + Math.sin(t * 2.2) * 0.8;
