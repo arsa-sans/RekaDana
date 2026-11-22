@@ -68,3 +68,34 @@ body {
   background: var(--color-border);
   border-radius: 2px;
 }
+
+/* ─── Financial float animations ───────────────────────────────────────────
+   Tiga variasi levitasi dengan phase offset — alasan: memberi kedalaman
+   tanpa terlihat seragam (R-14: variasi visual). Duration panjang (7-11s)
+   agar terasa ambient, bukan distracting (R-19: motion punya tujuan UX). */
+
+@keyframes float-a {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50%       { transform: translateY(-10px) rotate(0.5deg); }
+}
+@keyframes float-b {
+  0%, 100% { transform: translateY(0px) rotate(1deg); }
+  40%       { transform: translateY(-8px) rotate(-0.5deg); }
+  70%       { transform: translateY(-4px) rotate(0.8deg); }
+}
+@keyframes float-c {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  60%       { transform: translateY(-12px) rotate(-1deg); }
+}
+
+.animate-float-a {
+  animation: float-a 9s ease-in-out infinite;
+}
+.animate-float-b {
+  animation: float-b 11s ease-in-out infinite;
+  animation-delay: -3.5s;
+}
+.animate-float-c {
+  animation: float-c 7.5s ease-in-out infinite;
+  animation-delay: -1.8s;
+}
