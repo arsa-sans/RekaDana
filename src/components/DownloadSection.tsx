@@ -1,5 +1,6 @@
 import { Download, Smartphone } from "lucide-react";
 import AnimateIn from "@/components/AnimateIn";
+import { DownloadFinancialFloats } from "@/components/FinancialFloats";
 
 export default function DownloadSection() {
   return (
@@ -27,7 +28,10 @@ export default function DownloadSection() {
         }}
       />
 
-      <div className="relative max-w-5xl mx-auto px-5">
+      {/* Dekorasi ambient — alasan: section gelap perlu kontrapoin finansial yang relevan */}
+      <DownloadFinancialFloats />
+
+      <div className="relative max-w-5xl mx-auto px-5 z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <AnimateIn>
@@ -57,7 +61,7 @@ export default function DownloadSection() {
                 <a
                   href="/rekadana.apk"
                   download
-                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-[6px] font-semibold text-sm bg-[#35B88A] text-[#153D35] hover:bg-[#2EA87D] transition-colors"
+                  className="relative z-20 inline-flex items-center gap-2.5 px-6 py-3 rounded-[6px] font-semibold text-sm bg-[#35B88A] text-[#153D35] hover:bg-[#2EA87D] transition-colors"
                 >
                   <Download size={18} aria-hidden="true" />
                   Unduh APK
