@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import AnimateIn from "@/components/AnimateIn";
+import { HowItWorksFinancialFloats } from "@/components/FinancialFloats";
 
 const STEPS = [
   {
@@ -53,10 +54,12 @@ export default function HowItWorks() {
   return (
     <section
       id="cara-pakai"
-      className="py-20 bg-[#EAF5F0]"
+      className="py-20 bg-[#EAF5F0] relative overflow-hidden"
       aria-labelledby="cara-pakai-heading"
     >
-      <div className="max-w-5xl mx-auto px-5">
+      {/* Dekorasi ambient — alasan: section mint perlu element penanda finance domain */}
+      <HowItWorksFinancialFloats />
+      <div className="relative max-w-5xl mx-auto px-5 z-10">
         <AnimateIn className="mb-14">
           <h2
             id="cara-pakai-heading"
@@ -104,49 +107,69 @@ export default function HowItWorks() {
           {/* Visual panel — alasan: variasi komposisi section (R-05), tidak semua section card grid */}
           <AnimateIn direction="right" className="hidden lg:block">
             <div
-              className="rounded-[16px] p-7 h-full"
+              className="rounded-[16px] p-7 h-full flex flex-col justify-between"
               style={{
                 backgroundColor: "white",
                 border: "1px solid #D1E8DF",
                 boxShadow: "0 1px 3px rgba(21,61,53,0.08), 0 1px 2px rgba(21,61,53,0.04)",
               }}
             >
-              <p className="text-xs font-medium mb-5 text-[#64748B] uppercase tracking-wide">
-                Alur Status Pengajuan
-              </p>
-
-              {/* Status flow visualization */}
-              {[
-                { label: "Draf", bg: "#F1F5F9", text: "#475569", w: "55%" },
-                { label: "Diajukan", bg: "#DBEAFE", text: "#1E40AF", w: "72%" },
-                { label: "Disetujui", bg: "#D1FAE5", text: "#065F46", w: "88%" },
-                { label: "Lunas", bg: "#EAF5F0", text: "#153D35", w: "100%" },
-              ].map((s, i) => (
-                <div key={s.label} className="mb-4">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span
-                      className="text-xs font-medium px-2 py-0.5 rounded-[4px]"
-                      style={{ backgroundColor: s.bg, color: s.text }}
-                    >
-                      {s.label}
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#EAF5F0] overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full bg-[#35B88A]"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: s.w }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: "easeOut" }}
-                    />
-                  </div>
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <p className="text-xs font-bold text-[#153D35] uppercase tracking-wide">
+                    Alur Status Pengajuan Dana
+                  </p>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-[4px] bg-[#EAF5F0] text-[#153D35]">
+                    Simulasi Sistem
+                  </span>
                 </div>
-              ))}
 
-              <p className="text-xs text-[#64748B] mt-6 leading-relaxed">
-                Setiap pengajuan pengeluaran melewati alur yang jelas. Tidak ada
-                dana keluar tanpa rekam jejak.
-              </p>
+                {/* Status flow visualization */}
+                {[
+                  { label: "1. Draf Pengajuan", desc: "Input rincian pos anggaran", bg: "#F1F5F9", text: "#475569", w: "45%" },
+                  { label: "2. Diajukan ke Bendahara", desc: "Lampiran nota & estimasi", bg: "#DBEAFE", text: "#1E40AF", w: "70%" },
+                  { label: "3. Disetujui & Dicairkan", desc: "Tanda tangan digital tercatat", bg: "#D1FAE5", text: "#065F46", w: "90%" },
+                  { label: "4. Laporan & Buku Kas", desc: "Realisasi otomatis masuk rekap", bg: "#EAF5F0", text: "#153D35", w: "100%" },
+                ].map((s, i) => (
+                  <div key={s.label} className="mb-4">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span
+                        className="text-xs font-semibold px-2 py-0.5 rounded-[4px]"
+                        style={{ backgroundColor: s.bg, color: s.text }}
+                      >
+                        {s.label}
+                      </span>
+                      <span className="text-[11px] text-[#64748B]">{s.desc}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-[#EAF5F0] overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-[#35B88A]"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: s.w }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Sample transaction slip preview */}
+              <div className="mt-6 p-4 rounded-[10px] bg-[#F6F8F7] border border-[#D1E8DF]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#35B88A]" />
+                    <span className="text-xs font-bold text-[#153D35]">Contoh Bukti #RD-104</span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#065F46] bg-[#D1FAE5] px-2 py-0.5 rounded">
+                    Terverifikasi
+                  </span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <p className="text-xs text-[#64748B]">Sewa Sound System & Genset</p>
+                  <p className="text-sm font-bold text-[#153D35] tabular-nums">Rp 1.250.000</p>
+                </div>
+              </div>
             </div>
           </AnimateIn>
         </div>
