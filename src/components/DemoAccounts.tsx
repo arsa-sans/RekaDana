@@ -1,6 +1,7 @@
 import { CopyButton } from "@/components/CopyButton";
 import AnimateIn from "@/components/AnimateIn";
 import { StaggerGroup, StaggerItem } from "@/components/AnimateIn";
+import { DemoFinancialFloats } from "@/components/FinancialFloats";
 
 const DEMO_ACCOUNTS = [
   {
@@ -9,6 +10,7 @@ const DEMO_ACCOUNTS = [
     email: "budi.santoso@demo.rekadana",
     password: "DemoRekaDana2026!",
     desc: "Membuat kegiatan, menyusun skenario anggaran, mengelola struktur panitia, dan memantau realisasi.",
+    badge: "Otorisasi Anggaran",
   },
   {
     role: "Bendahara",
@@ -16,6 +18,7 @@ const DEMO_ACCOUNTS = [
     email: "siti.rahayu@demo.rekadana",
     password: "DemoRekaDana2026!",
     desc: "Meninjau dan menyetujui pengajuan pengeluaran panitia, mencatat bukti transfer, dan mengelola kas.",
+    badge: "Verifikasi Kas & Pencairan",
   },
   {
     role: "Anggota Panitia",
@@ -23,6 +26,7 @@ const DEMO_ACCOUNTS = [
     email: "andi.pratama@demo.rekadana",
     password: "DemoRekaDana2026!",
     desc: "Mengajukan pengeluaran kegiatan dengan lampiran bukti nota, serta memantau status pengajuan.",
+    badge: "Pengajuan & Bukti Nota",
   },
 ];
 
@@ -30,10 +34,12 @@ export default function DemoAccounts() {
   return (
     <section
       id="demo"
-      className="py-20 bg-[#F6F8F7]"
+      className="py-20 bg-[#F6F8F7] relative overflow-hidden"
       aria-labelledby="demo-heading"
     >
-      <div className="max-w-5xl mx-auto px-5">
+      {/* Dekorasi finansial ambient */}
+      <DemoFinancialFloats />
+      <div className="relative max-w-5xl mx-auto px-5 z-10">
         <AnimateIn className="mb-12">
           <h2
             id="demo-heading"
@@ -60,7 +66,9 @@ export default function DemoAccounts() {
                   <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded-[6px] bg-[#EAF5F0] text-[#153D35]">
                     {account.role}
                   </span>
-                  <span className="text-xs font-medium text-[#64748B]">OSIS SMK</span>
+                  <span className="text-[11px] font-medium text-[#065F46] bg-[#D1FAE5] px-2 py-0.5 rounded">
+                    {account.badge}
+                  </span>
                 </div>
 
                 <h3 className="text-base font-bold text-[#153D35] mb-2">{account.name}</h3>
