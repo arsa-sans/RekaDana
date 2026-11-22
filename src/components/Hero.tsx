@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Download, ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
+import { HeroFinancialFloats } from "@/components/FinancialFloats";
 
 // 3D phone dimuat secara lazy — tidak dirender di server
 const Hero3DPhone = dynamic(() => import("@/components/Hero3DPhone"), { ssr: false });
@@ -33,18 +34,35 @@ export default function Hero() {
         }}
       />
 
+      {/* Financial wave watermark — garis tren halus di latar belakang hero */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 opacity-[0.06] pointer-events-none hidden md:block"
+      >
+        <svg
+          viewBox="0 0 1440 600"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full object-cover"
+        >
+          <path
+            d="M-50 480 C 250 420, 450 510, 750 360 C 1050 210, 1250 310, 1500 180"
+            stroke="#35B88A"
+            strokeWidth="3"
+            strokeDasharray="8 6"
+          />
+          <path
+            d="M-50 540 C 300 490, 550 550, 850 420 C 1150 290, 1350 350, 1500 240"
+            stroke="#35B88A"
+            strokeWidth="1.5"
+          />
+        </svg>
+      </div>
+
       <div className="relative max-w-5xl mx-auto px-5 pt-20 pb-0 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        {/* Left: teks & CTA */}
-        <div className="pb-24 lg:pb-28">
+        {/* Left: teks & CTA — dipastikan z-10 agar selalu di atas layer dekoratif */}
+        <div className="pb-24 lg:pb-28 relative z-10">
           {/* Context label — masuk dulu, ukuran kecil */}
-          <motion.p
-            className="text-sm font-medium mb-5 text-[#35B88A]"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Untuk OSIS, Ekstrakurikuler, dan Panitia Kegiatan Sekolah
-          </motion.p>
 
           <motion.h1
             id="hero-heading"
@@ -92,7 +110,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right: 3D phone — alasan: menunjukkan bahwa ini aplikasi Android secara interaktif */}
+        {/* Right: 3D phone & surrounding financial float chips */}
         <motion.div
           className="hidden lg:flex justify-center items-end h-[520px] relative"
           initial={{ opacity: 0, scale: 0.92, y: 24 }}
@@ -100,6 +118,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           aria-hidden="true"
         >
+          {/* Float chips berada di dalam container kolom kanan, tidak akan menimpa judul */}
+          <HeroFinancialFloats />
           <Hero3DPhone />
         </motion.div>
       </div>
