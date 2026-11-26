@@ -67,7 +67,7 @@ export default function DownloadSection() {
                   Unduh APK
                 </a>
                 <div>
-                  <p className="text-sm font-medium text-white">Versi 1.0.0 (Release) • 51.5 MB</p>
+                  <p className="text-sm font-medium text-white">Versi 1.0.0 (Release) • 51.7 MB</p>
                   <p className="text-xs text-white/60">Android 7.0 (API 24) ke atas • File APK langsung</p>
                 </div>
               </div>
