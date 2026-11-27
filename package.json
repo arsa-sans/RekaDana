@@ -7,15 +7,25 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1178.0",
+    "@neondatabase/serverless": "^1.2.1",
+    "drizzle-orm": "^0.45.4",
     "framer-motion": "^14.14.0",
     "lucide-react": "^1.74.0",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "three": "^0.187.0"
+    "three": "^0.187.0",
+    "uuid": "^14.0.3",
+    "ws": "^8.23.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "16.4.6",
@@ -24,6 +34,9 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
+    "@types/uuid": "^11.0.0",
+    "@types/ws": "^8.18.2",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^10.15.0",
     "tailwindcss": "^4.3.5",
     "typescript": "^5.9.3"
