@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { NextRequest } from "next/server";
-import { requireAuth } from "@/server/session";
+import { requireAuth } from "@/server/auth/session";
 import { requireBudgetVersionAccess, requireRole } from "@/server/authorization";
 import { validateUuidParam } from "@/server/http/request";
 import { handleBudgetVersionError } from "@/server/http/budget-error";
